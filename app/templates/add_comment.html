@@ -1,0 +1,39 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block title %}Comment on Blog Post {%endblock%}
+
+{% block content %} 
+
+ 
+
+<section id="blog-comment-form" class="blog-comment-form section">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <form method="POST" role="form">
+      {% csrf_token %}
+      <div class="section-header">
+        <h3>Commentaire</h3>
+      </div>
+      <div class="row gy-3">
+        <div class="col-md-6 form-group">
+          <label for="{{ form.name.id_for_label }}">Votre nom complet *</label>
+         
+          <input type="text" name="name" class="form-control" id="name" placeholder="Rentrez votre nom"
+            required=""/>
+        </div>
+        <div class="col-12 form-group">
+          <label for="{{ form.body.id_for_label }}">Votre commentaire *</label>
+          
+          <textarea class="form-control" name="body" id="comment" rows="5" placeholder="Dites-nous ce que vous pensez..." required=""></textarea>
+        </div>
+        <div class="col-12 text-center">
+          <button type="submit" class="btn-submit">
+            Post Comment
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+
+{% endblock %}

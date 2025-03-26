@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page de Modification de Profil {%endblock%}
+
+{%block content %} 
+
+{% if user.is_authenticated %}
+    
+      
+<section id="blog-comment-form" class="blog-comment-form section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <form method="POST" enctype="multipart/form-data" role="form">
+        {% csrf_token %}
+        <div class="section-header">
+          <h3>Modifier le profil d'utilisateur</h3>
+          <p>
+            Vos informations sont parfaitement sécurisées <span style="color: red;">*</span>
+          </p>
+        </div>
+
+        <div class="row gy-3">
+
+          <div class="col-md-12 form-group">
+            <label for="id_profile_pic">Photo de profil <span style="color: red;">*</span></label>
+            <input
+              type="file"
+              name="profile_pic"
+              class="form-control"
+              id="id_profile_pic"
+              placeholder="Choisissez une photo de profil"
+              required=""
+              accept="image/*"
+            />
+          </div>
+
+
+
+          <div class="col-12 form-group">
+            <label for="id_bio">Parlez un peu de vous <span style="color: red;">*</span></label>
+            <textarea
+              class="form-control"
+              name="bio"
+              id="id_bio"
+              rows="5"
+              placeholder="Parlez un peu de vous..."
+              required=""
+            ></textarea>
+          </div>
+
+          <div class="col-12 form-group">
+            <label for="id_facebook_url">Facebook</label>
+            <input
+              type="text"
+              name="facebook_url"
+              class="form-control"
+              id="website"
+              placeholder="votre profil Facebook"
+              maxlength="255"
+            />
+          </div>
+
+          
+          <div class="col-12 form-group">
+            <label for="id_twitter_url">Twitter</label>
+            <input
+              type="text"
+              name="twitter_url"
+              class="form-control"
+              id="website"
+              placeholder="votre profil Twitter"
+              maxlength="255"
+            />
+          </div>
+
+          <div class="col-12 form-group">
+            <label for="id_instagram_url">Instagram</label>
+            <input
+              type="text"
+              name="instagram_url"
+              class="form-control"
+              id="website"
+              placeholder="votre profil Instagram"
+              maxlength="255"
+            />
+
+          </div>
+
+          <div class="col-12 form-group">
+            <label for="id_pinterest_url">Linkedin</label>
+            <input
+              type="text"
+              name="pinterest_url"
+              class="form-control"
+              id="website"
+              placeholder="votre profil Linkedin"
+              maxlength="255"
+            />
+          </div>
+
+          
+          <div class="col-12 text-center">
+            <button type="submit" class="btn-submit">
+              Validez
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    {% else %}
+    <br />
+    <h3>You're not the correct User to Edit This Page ...</h3>
+    {% endif %} 
+
+</section>
+
+{% endblock %}

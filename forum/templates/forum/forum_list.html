@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block content %}
+<div class="container-fluid vh-100">
+  <div class="row h-100">
+    <!-- Main content (left side) -->
+    <div class="col-md-9 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-4 pt-4">
+        <h1>Forum Discussions</h1>
+        <a href="{% url 'forum:create_topic' %}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Nouveau Sujet
+        </a>
+      </div>
+
+      <div class="list-group flex-grow-1 overflow-auto">
+        {% for topic in topics %}
+        <div class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <div>
+              <h5 class="mb-1">
+                <a href="{% url 'forum:topic_detail' topic.pk %}"
+                  >{{ topic.title }}</a
+                >
+              </h5>
+              <small class="text-muted">
+                By <strong>{{ topic.author.username }}</strong> in
+                <span class="badge bg-secondary"
+                  >{{ topic.category.name }}</span
+                >
+                <!-- Ceci devrait déjà fonctionner -->
+              </small>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-success me-1">
+                <i class="fas fa-arrow-up"></i> {{ topic.total_upvotes }}
+              </span>
+              <span class="badge bg-danger me-1">
+                <i class="fas fa-arrow-down"></i> {{ topic.total_downvotes }}
+              </span>
+              <span class="badge bg-primary">
+                <i class="fas fa-comment"></i> {{ topic.replies.count }}
+              </span>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">No topics available yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sidebar (right side) -->
+    <div class="col-md-3 h-100 py-4 border-start">
+      <div class="sticky-top pt-3">
+        <h4>Catégories</h4>
+        <div class="list-group">
+          <a
+            href="{% url 'forum:topic_list' %}"
+            class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}"
+          >
+            Toutes les catégories
+          </a>
+          {% for category in categories %}
+          <a
+            href="{% url 'forum:topic_list' %}?category={{ category.id }}"
+            class="list-group-item list-group-item-action {% if request.GET.category|add:'0' == category.id %}active{% endif %}"
+          >
+            {{ category.name }}
+            <span class="badge bg-primary float-end"
+              >{{ category.topics.count }}</span
+            >
+          </a>
+          {% empty %}
+          <div class="list-group-item text-muted">
+            Aucune catégorie disponible
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+  .sticky-top {
+    top: 20px;
+  }
+</style>
+
+{% endblock %}

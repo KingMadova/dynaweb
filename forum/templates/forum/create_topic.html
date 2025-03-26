@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    
+    <!-- Champ Catégorie -->
+    <div class="mb-3">
+        <label for="{{ form.category.id_for_label }}" class="form-label">Catégorie</label>
+        <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}" 
+                class="form-select {% if form.category.errors %}is-invalid{% endif %}">
+            {% for choice in form.category.field.choices %}
+                <option value="{{ choice.0 }}" {% if form.category.value == choice.0 %}selected{% endif %}>
+                    {{ choice.1 }}
+                </option>
+            {% endfor %}
+        </select>
+        {% if form.category.errors %}
+            <div class="invalid-feedback">
+                {{ form.category.errors|join:", " }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Champ Titre -->
+    <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Titre</label>
+        <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+               class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+               value="{{ form.title.value|default:'' }}"
+               placeholder="Donnez un titre clair à votre sujet">
+        {% if form.title.errors %}
+            <div class="invalid-feedback">
+                {{ form.title.errors|join:", " }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Champ Contenu -->
+    <div class="mb-3">
+        <label for="{{ form.content.id_for_label }}" class="form-label">Contenu</label>
+        <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}"
+                  class="form-control {% if form.content.errors %}is-invalid{% endif %}" 
+                  rows="6"
+                  placeholder="Développez votre sujet ici...">{{ form.content.value|default:'' }}</textarea>
+        {% if form.content.errors %}
+            <div class="invalid-feedback">
+                {{ form.content.errors|join:", " }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn btn-primary me-md-2">
+            <i class="fas fa-paper-plane me-2"></i> Publier
+        </button>
+        <a href="{% url 'forum:forum_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-times me-2"></i> Annuler
+        </a>
+    </div>
+</form>
+<br/>
+{% endblock %}

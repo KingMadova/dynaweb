@@ -1,0 +1,103 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Edit Setting
+{%endblock%} {%block content %}
+
+<section id="blog-comment-form" class="blog-comment-form section">
+              <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <form method="POST" role="form">
+                  {% csrf_token %}
+                  <div class="section-header">
+                    <h3>Enregistrement</h3>
+                    <p>
+                     Vos informations sont parfaitement sécurisées <span style="color: red;">*</span>
+                    </p>
+                  </div>
+
+                  <div class="row gy-3">
+                    <div class="col-md-12 form-group">
+                      <label for="username">Nom d'utilisateur <span style="color: red;">*</span></label>
+                      <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        id="name"
+                        placeholder="Votre nom d'utilisateur"
+                        required=""
+                        maxlength="150" 
+                        autofocus
+                      />
+                      <span class="helptext" id="id_username_helptext">Obligations: 150 caractères ou moins. les lettres et  @/./+/-/_ seulement.</span>
+                    </div>
+                    
+
+                    <div class="col-md-12 form-group">
+                      <label for="first_name">Votre Prénom <span style="color: red;">*</span></label>
+                      <input
+                        type="first_name"
+                        name="first_name"
+                        class="form-control"
+                        id="first_name"
+                        placeholder="Votre Prénom"
+                        required=""
+                        maxlength="100"
+                      />
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                      <label for="id_last_name">Votre Nom <span style="color: red;">*</span></label>
+                      <input
+                        type="last_name"
+                        name="last_name"
+                        class="form-control"
+                        id="id_last_name"
+                        placeholder="Votre Nom"
+                        required=""
+                        maxlength="100"
+                      />
+                    </div>
+
+                     <div class="col-12 form-group">
+                      <label for="id_email">E-mail</label>
+                      <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        id="id_email"
+                        placeholder="Votre e-mail"
+                      />
+                    </div>
+
+<div class="col-12 form-group">
+  <label>Password</label>
+  <div disabled aria-describedby="id_password_helptext" id="id_password">
+<p>    
+</p>
+</div>
+<span class="helptext" id="id_password_helptext">Cet endroit n'est pas fait pour modifier son mot de passe. Bon! si vous souhaitez quand-même le faire cliquez <a class="button" href="../password/"><strong>ici</strong></a> et sachez que vous allez devoir reprendre la modification ou la mise à jour de vos informations.</span>
+</div>
+    
+    <div class="col-2 form-group">
+      <label for="id_is_staff">Is staff</label>
+        <input type="checkbox" name="is_staff" class="form-check" id="id_is_staff" checked/>
+    </div>
+
+  
+  <div class="col-2 form-group">
+      <label for="id_is_active">Is active</label>
+        <input type="checkbox" name="is_active" class="form-check" id="id_is_staff" checked/>
+    </div>
+
+
+
+ 
+
+                    <div class="col-12 text-center">
+                      <button class="btn-submit">
+                        Mettre à jour
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+</section>
+
+{% endblock %}

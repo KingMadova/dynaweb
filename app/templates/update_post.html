@@ -1,0 +1,120 @@
+{% extends 'base.html' %} 
+{% block title %} Modification de l'article {% endblock %} 
+{% block content %} 
+
+
+{% if user.is_authenticated %} {% if user.id == post.author.id %}
+
+<section id="blog-comment-form" class="blog-comment-form section">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <form method="POST" enctype="multipart/form-data" role="form">
+      <link href="/static/ckeditor/ckeditor.css" media="all" rel="stylesheet" />
+      <script
+        src="/static/ckeditor/ckeditor-init.js"
+        data-ckeditor-basepath="/static/ckeditor/ckeditor/"
+        id="ckeditor-init-script"
+      ></script>
+      <script src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+      <script src="/static/ckeditor/fixups.js"></script>
+      {% csrf_token %}
+      <div class="section-header">
+        <h3>Modifiez l'article</h3>
+      </div>
+      <div class="row gy-3">
+        <div class="col-md-12 form-group">
+          <label for="id_title">Titre <span style="color: red">*</span></label>
+          <input
+            type="text"
+            name="title"
+            class="form-control"
+            id="id_title"
+            placeholder="Le titre de votre article"
+            required=""
+            maxlength="255"
+            autofocus
+          />
+        </div>
+
+        <div class="col-md-12 form-group">
+          <label for="id_title_tag"
+            >Tag de l'article <span style="color: red">*</span></label
+          >
+          <input
+            type="text"
+            name="title_tag"
+            class="form-control"
+            id="id_title_tag"
+            placeholder="Le tag de votre article"
+            required=""
+            maxlength="255"
+          />
+        </div>
+
+        <div class="col-md-12 form-group">
+          <label for="id_header_image"
+            >Image de l'article <span style="color: red">*</span></label
+          >
+          <input
+            type="file"
+            name="header_image"
+            class="form-control"
+            id="id_header_image"
+            placeholder="image de l'article"
+            required=""
+            accept="image/*"
+          />
+        </div>
+
+        <div class="col-12 form-group">
+          <label for="id_body"
+            >Votre article <span style="color: red">*</span></label
+          >
+          <div
+            class="django-ckeditor-widget"
+            data-field-id="id_body"
+            style="display: inline-block"
+          ></div>
+          <textarea
+            class="form-control"
+            name="body"
+            id="id_body"
+            rows="10"
+            placeholder="Rédigez votre article ici..."
+            required=""
+            data-processed="0"
+            data-config='{"skin": "moono-lisa", "toolbar_Basic": [["Source", "-", "Bold", "Italic"]], "toolbar_Full": [["Styles", "Format", "Bold", "Italic", "Underline", "Strike", "SpellChecker", "Undo", "Redo"], ["Link", "Unlink", "Anchor"], ["Image", "Flash", "Table", "HorizontalRule"], ["TextColor", "BGColor"], ["Smiley", "SpecialChar"], ["Source"]], "toolbar": "Full", "height": 291, "width": "100%", "filebrowserWindowWidth": 940, "filebrowserWindowHeight": 725, "language": "fr-fr", "versionCheck": false}'
+            data-external-plugin-resources="[]"
+            data-id="id_body"
+            data-type="ckeditortype"
+          >
+          </textarea>
+        </div>
+
+        <div class="col-md-12 form-group">
+          <label for="id_snippet"
+            >Resume de votre article <span style="color: red">*</span></label
+          >
+          <input
+            type="text"
+            name="snippet"
+            class="form-control"
+            id="id_snippet"
+            placeholder="Resume de votre article"
+            required=""
+            maxlength="255"
+          />
+        </div>
+
+        <div class="col-12 text-center">
+          <button class="btn-submit">Modifiez</button>
+          <a href="{% url 'home' %}" class="btn-submit">Annulez</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% else %}
+<br />
+You're not allowed here ! (and you know it...) {% endif %} {% else %}
+<br />
+You're not allowed here ! (and you know it...) {% endif %} {% endblock %}

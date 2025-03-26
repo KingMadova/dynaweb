@@ -1,0 +1,563 @@
+{% extends 'base.html' %} {% load static %} {%block content %}
+<!-- HOME -->
+<main class="main">
+  <!-- Blog Hero Section -->
+
+   <!-- Call To Action Section -->
+  <!-- Call To Action 2 Section -->
+  <section id="call-to-action-2" class="call-to-action-2 section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div
+        class="advertise-1 d-flex flex-column flex-lg-row gap-4 align-items-center position-relative"
+      >
+        <div
+          class="content-left flex-grow-1"
+          data-aos="fade-right"
+          data-aos-delay="200"
+        >
+          <span class="badge text-uppercase mb-2">Mr. Digne Tsalissan Okombi</span>
+          <h2>Génération Auto-Entrepreneurs</h2>
+          <p class="my-4">
+            Nous offrons un espace d’échange, de partage et d’accompagnement pour vous aider à relever les défis du monde des affaires au CongoNous croyons fermement que l'entrepreneuriat est un moteur de développement personnel, social et économique. En donnant aux jeunes les outils, les compétences et les ressources nécessaires, nous contribuons à façonner une génération de leaders visionnaires, capables d'innover, de créer de la valeur et de relever les défis de demain.
+          </p>
+
+          <div class="features d-flex flex-wrap gap-3 mb-4">
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Accompagnement</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Réseautage</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Formations</span>
+            </div>
+          </div>
+
+          <div class="cta-buttons d-flex flex-wrap gap-3">
+            <a href="{% url 'contact' %}" class="btn btn-primary"
+              >Contactez-Nous</a
+            >
+            <a href="{% url 'about' %}" class="btn btn-outline"
+              >A propos de nous</a
+            >
+          </div>
+        </div>
+
+        <div 
+        class="content-right position-relative"
+        data-aos="fade-right"
+        data-aos-delay="300"
+    >
+        <img
+            src="{% static 'assets/img/cta/OKOMBI.png' %}"
+            alt="Digital Platform"
+            class="img-fluid rounded-4"
+        />
+    
+        <div class="floating-cards">            
+          <div class="floating-card float-left">
+                <div class="card-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <div class="card-content">
+                    <span class="stats-number">+1000</span>
+                    <span class="stats-text">Jeunes <br> Accompagnés</span>
+                </div>
+            </div>
+    
+            <div class="floating-card float-top">
+                <div class="card-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="card-content">
+                    <span class="stats-number">+500</span>
+                    <span class="stats-text">Entrepreneurs <br> Formés</span>
+                </div>
+            </div>
+    
+            <div class="floating-card float-right">
+                <div class="card-icon">
+                    <i class="bi bi-award"></i>
+                </div>
+                <div class="card-content">
+                    <span class="stats-number">+200</span>
+                    <span class="stats-text">Projets <br> Lancés</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+        <div class="decoration">
+          <div class="circle-1"></div>
+          <div class="circle-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Call To Action 2 Section -->
+
+
+  <section id="blog-hero" class="blog-hero section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="blog-grid">
+        {% for post in main_post %}
+        <!-- Featured Post (Large) -->
+        <article class="blog-item featured" data-aos="fade-up">
+          <img
+            src="{{ post.header_image.url }}"
+            alt="Blog Image"
+            class="img-fluid"
+          />
+          <div class="blog-content">
+            <div class="post-meta">
+              <span class="date">{{post.post_date}}</span>
+              <span class="category">
+                <a href="{% url 'category' post.category|slugify %}">
+                  {{ post.category }}
+                </a>
+              </span>
+              {% if user.is_authenticated %} {% if user.id == post.author.id %} -
+              <a href="{% url 'update_post' post.pk %}">(Edit)</a>
+              <a href="{% url 'delete_post' post.pk %}">(Delete)</a>
+              {% endif %} {% endif %}
+            </div>
+            <h2 class="post-title">
+              <a href="{% url 'article_detail' post.pk %}">{{ post.title }}</a>
+            </h2>
+            <a href="{% url 'article_detail' post.pk %}" class="read-more"
+              >En savoir plus<i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </article>
+        <!-- End Featured Post -->
+        {% endfor %}
+        <!-- Regular Posts -->
+        {% for post in regular %}
+        <article class="blog-item" data-aos="fade-up" data-aos-delay="100">
+          <img
+            src="{{ post.header_image.url }}"
+            alt="Blog Image"
+            class="img-fluid"
+          />
+          <div class="blog-content">
+            <div class="post-meta">
+              <span class="date">{{post.post_date}}</span>
+              <span class="category">{{ post.category }}</span>
+            </div>
+            <h3 class="post-title">
+              <a href="{% url 'article_detail' post.pk %}" title="{{ post.title }}"
+                >{{ post.title }}</a
+              >
+            </h3>
+          </div>
+        </article>
+        {% endfor %}
+        <!-- End Blog Item -->
+      </div>
+    </div>
+  </section>
+  <!-- /Blog Hero Section -->
+
+  <!-- Featured Posts Section -->
+  <section id="featured-posts" class="featured-posts section">
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Realisations</h2>
+      <div>
+        <span>Checkez nos</span>
+        <span class="description-title">Realisations</span>
+      </div>
+    </div>
+    <!-- End Section Title -->
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="blog-posts-slider swiper init-swiper">
+        <script type="application/json" class="swiper-config">
+          {
+            "loop": true,
+            "speed": 800,
+            "autoplay": {
+              "delay": 5000
+            },
+            "slidesPerView": 3,
+            "spaceBetween": 30,
+            "breakpoints": {
+              "320": {
+                "slidesPerView": 1,
+                "spaceBetween": 20
+              },
+              "768": {
+                "slidesPerView": 2,
+                "spaceBetween": 20
+              },
+              "1200": {
+                "slidesPerView": 3,
+                "spaceBetween": 30
+              }
+            }
+          }
+        </script>
+
+        <div class="swiper-wrapper">
+          {% for post in tendance %}
+          <div class="swiper-slide">
+            <div class="blog-post-item">
+              <img src="{{ post.header_image.url }}" alt="Blog Image" />
+              <div class="blog-post-content">
+                <div class="post-meta">
+                  <span>
+                    <!-- <i class="bi bi-person"></i>- 
+                    {{post.author.first_name }}
+                    {{ post.author.last_name }}  -->
+                    {% if user.is_authenticated %}
+                    {% if user.id == post.author.id %}
+                    <a href="{% url 'update_post' post.pk %}">(Edit)</a>
+                    <a href="{% url 'delete_post' post.pk %}">(Delete)</a>
+                    {% endif %} {% endif %}</span
+                  >
+                  <span><i class="bi bi-clock"></i>{{post.post_date}}</span>
+                  <span
+                    ><i class="bi bi-chat-dots"></i>{{ post.comment_count }}
+                    Commentaires</span
+                  >
+                </div>
+                <h2>
+                  <a href="{% url 'article_detail' post.pk %}"
+                    >{{ post.title }}</a
+                  >
+                </h2>
+                <p>
+                  {{ post.snippet }}
+                </p>
+                <a href="{% url 'article_detail' post.pk %}" class="read-more"
+                  >En savoir plus<i class="bi bi-arrow-right"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+          <!-- End slide item -->
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Featured Posts Section -->
+
+  <!-- Category Section Section -->
+  <section id="category-section" class="category-section section" >
+    <!-- Section Title -->
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Evenements</h2>
+      <div><span class="description-title">Differents Evenements</span></div>
+    </div>
+    <!-- End Section Title -->
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <!-- Featured Posts -->
+
+      <div class="row gy-4 mb-4">
+        {% for post in category %}
+        <div class="col-lg-4">
+          <article class="featured-post">
+            <div class="post-img">
+              <img
+                src="{{ post.header_image.url }}"
+                alt=""
+                class="img-fluid"
+                loading="lazy"
+              />
+            </div>
+            <div class="post-content">
+              <div class="category-meta">
+                <span class="post-category">{{ post.category }}</span>
+                <div class="author-meta">
+                  
+                  
+                    {% if user.is_authenticated %} 
+                    {% if user.id == post.author.id %}
+                    <!-- <a href="{% url 'update_post' post.pk %}">(Edit)</a>
+                    <a href="{% url 'delete_post' post.pk %}">(Delete)</a> -->
+                    {% endif %} {% endif %}</span
+                  >
+                  <span class="post-date">{{post.post_date}}</span>
+                </div>
+              </div>
+              <h2 class="title">
+                <a href="{% url 'article_detail' post.pk %}"
+                  >{{ post.title }}</a
+                >
+              </h2>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+        <br />
+        <br />
+        {% for post in small_cat %}
+        <div class="col-xl-4 col-lg-6">
+          <article class="list-post">
+            <div class="post-img">
+              <img
+                src="{{ post.header_image.url }}"
+                alt=""
+                class="img-fluid"
+                loading="lazy"
+              />
+            </div>
+            <div class="post-content">
+              <div class="category-meta">
+                <span class="post-category">{{ post.category }}</span>
+              </div>
+              <h3 class="title">
+                <a href="{% url 'article_detail' post.pk %}"
+                  >{{ post.title }}</a
+                >
+              </h3>
+              <div class="post-meta">
+                <span class="post-date">{{post.post_date}}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <!-- /Category Section Section -->
+   <div>
+    <span class="trait"></span>
+   </div>
+
+  <!-- SLIDER SECTION -->
+  <div class="containar" data-aos="fade-down" data-aos-delay="100">
+    <div class="slider" style="--width: 100px; --height: 50px; --quantity: 14">
+      <div class="list">
+        <div class="item" style="--position: 1">
+          <img src="{% static 'assets/img/images/slider1_1.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 2">
+          <img src="{% static 'assets/img/images/slider1_2.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 3">
+          <img src="{% static 'assets/img/images/slider1_3.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 4">
+          <img src="{% static 'assets/img/images/slider1_4.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 5">
+          <img src="{% static 'assets/img/images/slider1_5.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 6">
+          <img src="{% static 'assets/img/images/slider1_6.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 7">
+          <img src="{% static 'assets/img/images/slider1_7.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 8">
+          <img src="{% static 'assets/img/images/slider1_8.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 9">
+          <img src="{% static 'assets/img/images/slider1_9.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 10">
+          <img src="{% static 'assets/img/images/slider1_10.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 11">
+          <img src="{% static 'assets/img/images/slider1_11.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 12">
+          <img src="{% static 'assets/img/images/slider1_12.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 13">
+          <img src="{% static 'assets/img/images/slider1_13.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 14">
+          <img src="{% static 'assets/img/images/slider1_14.jpg' %}" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="slider slider20"
+      reverse="True"
+      style="--width: 200px; --height: 200px; --quantity: 9"
+    >
+      <div class="list">
+        <div class="item" style="--position: 1">
+          <img src="{% static 'assets/img/images/slider2_1.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 2">
+          <img src="{% static 'assets/img/images/slider2_2.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 3">
+          <img src="{% static 'assets/img/images/slider2_3.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 4">
+          <img src="{% static 'assets/img/images/slider2_4.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 5">
+          <img src="{% static 'assets/img/images/slider2_5.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 6">
+          <img src="{% static 'assets/img/images/slider2_6.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 7">
+          <img src="{% static 'assets/img/images/slider2_7.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 8">
+          <img src="{% static 'assets/img/images/slider2_8.jpg' %}" alt="" />
+        </div>
+        <div class="item" style="--position: 9">
+          <img src="{% static 'assets/img/images/slider2_9.jpg' %}" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SLIDER SECTION -->
+
+  <!-- Call To Action 2 Section -->
+  <section id="call-to-action-2" class="call-to-action-2 section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div
+        class="advertise-1 d-flex flex-column flex-lg-row gap-4 align-items-center position-relative"
+      >
+        <div
+          class="content-left flex-grow-1"
+          data-aos="fade-right"
+          data-aos-delay="200"
+        >
+          <span class="badge text-uppercase mb-2">Ne Manquez pas</span>
+          <h2>Libérez votre potentiel entrepreneurial avec GAE !</h2>
+          <p class="my-4">
+            Nous formons et accompagnons les jeunes auto-entrepreneurs pour
+            transformer leurs idées en succès.
+          </p>
+
+          <div class="features d-flex flex-wrap gap-3 mb-4">
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Accompagnement</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Réseautage</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Formations</span>
+            </div>
+          </div>
+
+          <div class="cta-buttons d-flex flex-wrap gap-3">
+            <a href="{% url 'contact' %}" class="btn btn-primary"
+              >Contactez-Nous</a
+            >
+            <a href="{% url 'about' %}" class="btn btn-outline"
+              >A propos de nous</a
+            >
+          </div>
+        </div>
+
+        <div
+          class="content-right position-relative"
+          data-aos="fade-left"
+          data-aos-delay="300"
+        >
+          <img
+            src="{% static 'assets/img/misc/misc-1.JPG' %}"
+            alt="Digital Platform"
+            class="img-fluid rounded-4"
+          />
+          <div class="floating-card">
+            <div class="card-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="card-content">
+              <span class="stats-number">+1000</span>
+              <span class="stats-text"
+                >Jeunes <br />
+                Accompagnés</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="decoration">
+          <div class="circle-1"></div>
+          <div class="circle-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Call To Action 2 Section -->
+
+  <!-- Latest Posts Section -->
+
+  <!-- /Latest Posts Section -->
+
+  <!-- Call To Action Section -->
+  <section id="call-to-action" class="call-to-action section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4 justify-content-between align-items-center">
+        <div class="col-lg-6">
+          <div class="cta-content" data-aos="fade-up" data-aos-delay="200">
+            <h2>Abonnez-vous à notre Newsletter</h2>
+            <p>
+              Soyez le premier à savoir ce qui va se dérouler dans votre
+              localité. Du Nord au Sud en passant par le Centre et de l'Est à
+              l'Ouest, Nous sommes là pour vous!
+            </p>
+            <form
+              action="forms/newsletter.php"
+              method="post"
+              class="php-email-form cta-form"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="input-group mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Votre adresse e-mail..."
+                  aria-label="Email address"
+                  aria-describedby="button-subscribe"
+                />
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  id="button-subscribe"
+                >
+                  Soumettre
+                </button>
+              </div>
+              <div class="loading">Loading</div>
+              <div class="error-message"></div>
+              <div class="sent-message">
+                Your subscription request has been sent. Thank you!
+              </div>
+            </form>
+
+         </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="cta-image" data-aos="zoom-out" data-aos-delay="200">
+            <img
+              src="{% static 'assets/img/cta/cta-1.png' %}"
+              alt=""
+              class="img-fluid"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Call To Action Section -->
+</main>
+
+{% endblock %}
+
+<!-- HOME -->

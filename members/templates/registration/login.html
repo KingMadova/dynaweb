@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Se connecter {%endblock%}
+{%block content %} <br /><br />
+
+<!-- LOGIN PAGE -->
+            <section id="blog-comment-form" class="blog-comment-form section">
+              <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <form method="POST" role="form">
+                  {% csrf_token %}
+                  <div class="section-header">
+                    <h3>Connexion</h3>
+                    <p>
+                      Vos informations sont parfaitement sécurisées <span style="color: red;">*</span>
+                    </p>
+                  </div>
+
+                  <div class="row gy-3">
+                    <div class="col-md-12 form-group">
+                      <label for="id_name">Nom d'utilisateur <span style="color: red;">*</span></label>
+                      <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        id="name"
+                        placeholder="Votre nom d'utilisateur"
+                        required=""
+                        type="text"
+                      />
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                      <label for="email">Mot de passe <span style="color: red;">*</span></label>
+                      <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        id="password"
+                        placeholder="Votre mot de passe"
+                        required=""
+                      />
+                    </div>
+
+                    <div class="col-12 text-center">
+                      <button type="submit" class="btn-submit">
+                        Se connectez
+                      </button>
+                    </div>
+                    <div id="emailHelp" class="text-center">
+                      Pas de profil ? Enregistrez-vous <a href="{% url 'register' %}">ici...</a>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </section>
+            <!-- /LOGIN PAGE -->
+
+{% endblock %}

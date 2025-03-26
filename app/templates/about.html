@@ -1,0 +1,129 @@
+{% extends 'base.html' %} {% load static %} {%block content %}
+<!-- HOME -->
+
+<main class="main">
+  <!-- Page Title -->
+  <div class="page-title">
+    <div class="breadcrumbs">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'category-list' %}">Category</a>
+          </li>
+          <li class="breadcrumb-item active current">About</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="title-wrapper">
+      <h1>À propos de la GAE</h1>
+      <p>
+       Dans un monde en constante évolution, où les opportunités d'entreprendre n'ont jamais été aussi accessibles, Génération Auto-Entrepreneurs (GAE) s'impose comme une plateforme dynamique et engagée pour encourager et accompagner les jeunes vers la création d'entreprise. Notre mission est simple : inspirer, former et soutenir celles et ceux qui souhaitent prendre leur destin en main et transformer leurs idées en réalité entrepreneuriale.
+      </p>
+    </div>
+  </div>
+  <!-- End Page Title -->
+
+  <!-- About Section -->
+  <section id="about" class="about section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <span class="section-badge"
+        ><i class="bi bi-info-circle"></i>Notre Vision</span
+      >
+      <div class="row">
+        <div class="col-lg-6">
+          <h2 class="about-title">Un Monde d'Opportunités pour Tous</h2>
+          <p class="about-description">
+            Inspirer, Former, Accompagner : Bâtir l'Avenir de l'Entrepreneuriat
+          </p>
+          <p>
+            Nous offrons un espace d’échange, de partage et d’accompagnement
+            pour vous aider à relever les défis du monde des affaires au CongoNous croyons fermement que l'entrepreneuriat est un moteur de développement personnel, social et économique. En donnant aux jeunes les outils, les compétences et les ressources nécessaires, nous contribuons à façonner une génération de leaders visionnaires, capables d'innover, de créer de la valeur et de relever les défis de demain.
+          </p>
+        </div>
+        <div class="col-lg-6">
+          <p class="about-text">
+            L'auto-entrepreneuriat est une solution pertinente face aux défis de l'emploi, notamment dans des économies où les opportunités de travail sont limitées. Il permet à chacun de développer son activité de manière flexible, adaptée à ses compétences et à ses aspirations.
+          </p>
+        </div>
+      </div>
+
+      <div class="row features-boxes gy-4 mt-3">
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <div class="icon-box">
+              <i class="bi bi-bullseye"></i>
+            </div>
+            <h3><a href="#" class="stretched-link">Réseautage et Communauté</a></h3>
+            <p>
+              Un accès à un réseau dynamique de jeunes entrepreneurs partageant les mêmes ambitions.
+
+Des événements, conférences et rencontres pour échanger, apprendre et développer des opportunités d'affaires.
+
+Une plateforme en ligne pour favoriser l'entraide et le partage d'expérience.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <div class="icon-box">
+              <i class="bi bi-person-check"></i>
+            </div>
+            <h3><a href="#" class="stretched-link">Accès à des Opportunités</a></h3>
+            <p>
+              Partenariats avec des entreprises, incubateurs et investisseurs pour faciliter le financement et le développement des projets.
+
+Accès à des concours et programmes d'incubation pour booster les startups en devenir.
+
+Sensibilisation aux nouvelles tendances et aux outils digitaux pour rester compétitif sur le marché.
+            </p>
+
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
+          <div class="feature-box">
+            <div class="icon-box">
+              <i class="bi bi-clipboard-data"></i>
+            </div>
+              <h3>
+              <a href="#" class="stretched-link">Accompagnement Personnalisé</a>
+            </h3>
+            <p>
+              Un suivi individualisé pour aider chaque porteur de projet à structurer et développer son activité.
+
+Des mentors et coachs disponibles pour guider les entrepreneurs à chaque étape de leur parcours.
+
+Un accompagnement juridique et administratif pour simplifier les démarches de création d'entreprise.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-lg-12" data-aos="zoom-in" data-aos-delay="200">
+          <div class="video-box">
+            <img
+              src="{% static 'assets/img/about/1about-wide-1.jpg' %}"
+              class="img-fluid"
+              alt="Video Thumbnail"
+            />
+            <a
+              href="https://www.youtube.com/watch?v=4ZRRWbs-ACI&t=15s&pp=ygUcZ2VuZXJhdGlvbiBhdXRvLWVudHJlcHJlbmV1cg%3D%3D"
+              class="glightbox pulsating-play-btn"
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /About Section -->
+</main>
+
+{% endblock %}
+
+<!-- HOME -->

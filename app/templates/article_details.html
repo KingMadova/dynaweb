@@ -1,0 +1,198 @@
+{% extends 'base.html' %} {% load static %} {% block title %}
+{{ post.title_tag }}
+{%endblock %} {%block content %}
+<main class="main">
+  <!-- Page Title -->
+  <div class="page-title">
+    <div class="breadcrumbs">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#"><i class="bi bi-house"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Category</a></li>
+          <li class="breadcrumb-item active current">Blog Details</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="title-wrapper">
+      <h1>Details de l'Article</h1>
+      <h3 class="title">{{ post.title }}</h3>
+      <!--   <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
+            tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p> -->
+    </div>
+  </div>
+  <!-- End Page Title -->
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Blog Details Section -->
+        <section id="blog-details" class="blog-details section">
+          <div class="container" data-aos="fade-up">
+            <article class="article">
+              <div class="hero-img" data-aos="zoom-in">
+                <img
+                  src="{{ post.header_image.url }}"
+                  alt="Featured blog image"
+                  class="img-fluid"
+                  loading="lazy"
+                />
+                <div class="meta-overlay">
+                  <!--  <div class="meta-categories">
+                        <a href="#">{% url 'category-list' %}</a>
+                        <span class="divider">•</span>
+                        <span class="reading-time"
+                          ><i class="bi bi-clock"></i> 6 min read</span
+                        >
+                      </div> -->
+                </div>
+              </div>
+
+              <div
+                class="article-content"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                <div class="content-header">
+                  <h1 class="title">{{ post.title }}</h1>
+
+                  <div class="author-info">
+                    <div class="author-details">
+                      {% if post.author.profile.profile_pic %}
+                      <img
+                        src="{{ post.author.profile.profile_pic.url }}"
+                        width="100"
+                        class="author-img"
+                        alt="Author"
+                      />
+
+                      {% else %}
+                      <img
+                        src="{% static 'app/images/default_profile.png' %}"
+                        width="100"
+                        class="author-img"
+                        alt="Author"
+                      />
+                      {% endif %}
+                      <div class="info">
+                        <h4>
+                          {{ post.author.first_name }} {{ post.author.last_name }}
+                        </h4>
+                        <span class="role">Community Manager</span>
+                      </div>
+                    </div>
+                    <div class="post-meta">
+                      <span class="date"
+                        ><i class="bi bi-calendar3"></i> {{post.post_date }}</span
+                      >
+                      <span class="divider">•</span>
+                      <span class="comments"
+                        ><i class="bi bi-chat-text"></i
+                        ><a href="{% url 'add_comment' post.pk %}">
+                          {{ post.comment_count }} Commentaire(s)</a
+                        ></span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="content">
+                  <p class="">{{ post.body|safe}}</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <!-- /Blog Details Section -->
+
+
+        <!-- Blog Comments Section -->
+        <section id="blog-comments" class="blog-comments section">
+          <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="blog-comments-3">
+              <div class="section-header">
+                <h3>
+                  Discussion
+                  <span class="comment-count">({{ post.comment_count }})</span>
+                </h3>
+              </div>
+
+              {% for comment in post.comments.all %}
+              <div class="comments-wrapper">
+                <article class="comment-card">
+                  <div class="comment-header">
+                    <div class="user-info">
+                      {% if comment.post.author.profile.profile_pic %}
+                      <img
+                        src="{{ comment.post.author.profile.profile_pic.url }}"
+                        width="100"
+                        class="card-img"
+                        alt="profile_pic"
+                        loading="lazy"
+                      />
+                      {% else %}
+                      <img
+                        src="{% static 'app/images/default_profile.png' %}"
+                        width="100"
+                        class="card-img"
+                        alt="default_pic_profile"
+                        loading="lazy"
+                      />
+                      {% endif %}
+                      <div class="meta">
+                        <h4 class="name">{{ comment.name }}</h4>
+                        <span class="date">
+                          <i class="bi bi-calendar3"></i>{{ comment.date_added
+                          }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="comment-content">
+                    <p>{{ comment.body }}</p>
+                  </div>
+                  <div
+                    action="{% url 'like_post' post.pk %}"
+                    method="POST"
+                    class="comment-actions"
+                  >
+                    {% csrf_token %}
+                    <button class="action-btn reply-btn">
+                      <i class="bi bi-reply"></i>
+                      <span
+                        ><a href="{% url 'add_comment' post.pk %}"
+                          >Répondre</a
+                        ></span
+                      >
+                    </button>
+                  </div>
+                </article>
+              </div>
+              {% empty %}
+              <p>
+                <i class="bi bi-chat-text"></i> Aucune discussion pour
+                l’instant.
+              </p>
+              <span class="comments">
+                <a href="{% url 'add_comment' post.pk %}">Discutez</a>
+              </span>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8"></div>
+  </div>
+</div>
+
+{% endblock %}

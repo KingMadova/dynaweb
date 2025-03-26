@@ -1,0 +1,5 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.content }}  <!-- Affiche seulement le champ content -->
+    <button type="submit" class="btn btn-primary mt-3">Envoyer</button>
+</form>

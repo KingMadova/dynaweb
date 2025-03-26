@@ -1,0 +1,35 @@
+{% extends 'base.html' %} 
+{% block title %}Créer une nouvelle catégorie{%endblock%}
+
+{%block content %} 
+
+{% if user.is_authenticated %}
+<section id="blog-comment-form" class="blog-comment-form section">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <form method="POST" role="form">
+      {% csrf_token %}
+      <div class="section-header">
+        <h3>Créer une catégorie</h3>
+      </div>
+      <div class="row gy-3">
+        <div class="col-md-12 form-group">
+          <label for="id_name">Catégorie <span style="color: red;">*</span></label>
+          <input type="text" name="name" class="form-control" id="id_name" maxlength="255" placeholder="Nouvelle catégorie"
+            required=""/>
+        </div>
+        <div class="col-12 text-center">
+          <button type="submit" class="btn-submit">
+            Créer
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% else %}
+<br />
+Vous n'êtes pas autorisé à être ici ! (et vous le savez...) 
+
+{% endif %} 
+
+{% endblock %}

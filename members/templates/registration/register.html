@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} S'enregistrez {%endblock%}
+{%block content %}
+
+<section id="blog-comment-form" class="blog-comment-form section">
+              <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <form method="POST" role="form">
+                  {% csrf_token %}
+                  <div class="section-header">
+                    <h3>Enregistrement</h3>
+                    <p>
+                     Vos informations sont parfaitement sécurisées <span style="color: red;">*</span>
+                    </p>
+                  </div>
+
+                  <div class="row gy-3">
+                    <div class="col-md-12 form-group">
+                      <label for="username">Nom d'utilisateur <span style="color: red;">*</span></label>
+                      <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        id="name"
+                        placeholder="Votre nom d'utilisateur"
+                        required=""
+                        maxlength="150" 
+                        autofocus
+                      />
+                      <span class="helptext" id="id_username_helptext">Obligations: 150 caractères ou moins. les lettres et  @/./+/-/_ seulement.</span>
+                    </div>
+                    
+
+                    <div class="col-md-12 form-group">
+                      <label for="first_name">Votre Prénom <span style="color: red;">*</span></label>
+                      <input
+                        type="first_name"
+                        name="first_name"
+                        class="form-control"
+                        id="first_name"
+                        placeholder="Votre Prénom"
+                        required=""
+                        maxlength="100"
+                      />
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                      <label for="last_name">Votre Nom <span style="color: red;">*</span></label>
+                      <input
+                        type="last_name"
+                        name="last_name"
+                        class="form-control"
+                        id="last_name"
+                        placeholder="Votre Nom"
+                        required=""
+                        maxlength="100"
+                      />
+                    </div>
+
+                     <div class="col-12 form-group">
+                      <label for="email">E-mail</label>
+                      <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="Votre e-mail"
+                      />
+                    </div>
+
+                   <div class="col-md-12 form-group">
+                      <label for="id_password1">Mot de passe <span style="color: red;">*</span></label>
+                      <input
+                        type="password"
+                        name="password1"
+                        class="form-control"
+                        id="id_password1"
+                        placeholder="Votre mot de passe"
+                        required=""
+                      />
+                      <span class="helptext" id="id_password1_helptext"><ul><li>Votre mot de passe ne doit pas contenir vos informations personnelles.</li><li>Votre mot de passe doit contenir au moins 8 caractères.</li><li>Votre mot de passe ne doit pas être commun (1234 ou abcd, etc.).</li><li>Votre mot de passe ne doit pas être simplement composé de chiffres</li></ul></span>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                      <label for="password2">Confirmez votre mot de passe <span style="color: red;">*</span></label>
+                      <input
+                        type="password"
+                        name="password2"
+                        class="form-control"
+                        id="password2"
+                        placeholder="Confirmez votre mot de passe"
+                        required=""
+                      />
+                       <span class="helptext" id="id_password2_helptext">Veuillez reproduire le même mot de passe, pour vérification.</span>
+                    </div>
+
+                    <div class="col-12 text-center">
+                      <button type="submit" class="btn-submit">
+                        S'enregistrez
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+{% endblock %}

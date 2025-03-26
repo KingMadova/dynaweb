@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% load static %} {%block content %}
+<!-- SEARCH RESULTAT -->
+
+<main class="main">
+  <!-- Page Title -->
+  <div class="page-title">
+    <div class="breadcrumbs">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Category</a></li>
+          <li class="breadcrumb-item active current">Search Results</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="title-wrapper">
+      <h1>Résultats de recherche</h1>
+      <p>Vous recherchez : <strong>"{{ query }}"</strong></p>
+    </div>
+  </div>
+  <!-- End Page Title -->
+
+  <!-- Search Results Posts Section -->
+  <section id="search-results-posts" class="search-results-posts section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4">
+        {% if results %} {% for post in results %}
+        <div class="col-lg-4">
+          <article>
+            <div class="post-img">
+              <img src="{{ post.header_image.url }}" alt="" class="img-fluid" />
+            </div>
+
+            <p class="post-category">{{ post.category }}</p>
+
+            <h2 class="title">
+              <a href="{% url 'article_detail' post.pk %}">{{ post.title }}</a>
+            </h2>
+
+            <div class="d-flex align-items-center">
+              <div class="post-meta">
+                <p class="post-author">
+                  {{ post.author.first_name }} {{ post.author.last_name }}
+                </p>
+                <p class="post-date">
+                  <time datetime="2022-01-01">{{post.post_date }}</time>
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+        {% endfor %} {% else %}
+        <div class="text-center">
+          <div class="error-icon mb-4" data-aos="zoom-in" data-aos-delay="200">
+            <i class="bi bi-exclamation-circle"></i>
+          </div>
+          <h2 class="error-title mb-3" data-aos="fade-up" data-aos-delay="400">
+            Oups! Aucun article trouvé.
+          </h2>
+        </div>
+        {% endif %}
+        <!-- End post list item -->
+      </div>
+    </div>
+  </section>
+
+  <!-- /Search Results Posts Section -->
+</main>
+
+{% endblock %}
+
+<!-- SEARCH RESULTAT -->
