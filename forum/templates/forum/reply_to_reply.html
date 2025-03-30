@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4>Réponse à {{ parent_reply.author.username }}</h4>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <p><strong>Message original :</strong></p>
+        <p>{{ parent_reply.content }}</p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <textarea
+            name="content"
+            class="form-control"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          Envoyer la réponse
+        </button>
+        <a
+          href="{% url 'forum:topic_detail' pk=topic.id %}"
+          class="btn btn-secondary"
+          >Annuler</a
+        >
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

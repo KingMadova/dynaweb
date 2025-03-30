@@ -6,10 +6,14 @@ from django.urls import reverse, reverse_lazy
 from django.http import HttpRequest, HttpResponseRedirect
 from django.core.mail import send_mail
 
+from django.contrib.auth.models import User
+from django.db.models import Count
+
 from .models import Category, Post, Comment
 
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, EditForm, CommentForm  # Utilisez CommentForm au lieu de AddCommentForm
+from .forms import PostForm, EditForm, CommentForm 
+
 
 
 def contact(request):
@@ -35,6 +39,21 @@ def contact(request):
     return render(request, 'contact.html')
 
 
+
+def author_profile(request, user_id):
+    author = get_object_or_404(
+        User.objects.prefetch_related('posts', 'comment')  # Utilisez 'comment' au lieu de 'comments'
+        .annotate(
+            post_count=Count('posts'),
+            comment_count=Count('comment')  # Utilisez 'comment' ici aussi
+        ),
+        pk=user_id
+    )
+    
+    return render(request, 'author_profile.html', {
+        'page_user': author.profile,
+        'author': author
+    })
 
 def confirmation_view(request : HttpRequest):
     name = request.GET.get('name')
@@ -62,12 +81,28 @@ def LikeView(request, pk):
     return HttpResponseRedirect(reverse('article_detail', args=[str(pk)]))
 
 
+@login_required
+def like_comment(request, pk):
+    comment = get_object_or_404(Comment, id=pk)
+    if request.method == 'POST':
+        if comment.likes.filter(id=request.user.id).exists():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+    return HttpResponseRedirect(reverse('article_detail', args=[str(comment.post.pk)]))
+
+
 class HomeView(ListView):
     model = Post
     template_name = 'home.html'
     # ordering = ['-post_date']
     ordering = ['-id']
 
+    def get_queryset(self):
+        return Post.objects.annotate(
+            comment_count=Count('comments')  # Utilise le related_name
+        ).order_by('-post_date')
+    
     def get_context_data(self, *args, **kwargs):
         cat_menu = Category.objects.all()
         context = super(HomeView, self).get_context_data(*args, **kwargs)
@@ -103,31 +138,19 @@ class ArticleDetailView(DetailView):
     model = Post
     template_name = 'article_details.html'  
     
-    def get_context_data(self, *args, **kwargs):
-        cat_menu = Category.objects.all()
-        context = super(ArticleDetailView, self).get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
         
-        stuff = get_object_or_404(Post, id=self.kwargs['pk'])
-        total_likes = stuff.total_likes()
-        
-        liked = False
-        if stuff.likes.filter(id=self.request.user.id).exists():
-            liked = True
-        
-        context["cat_menu"] = cat_menu
-        context["total_likes"] = total_likes
-        context["liked"] = liked
-        
+        context.update({
+            "total_likes": post.total_likes(),
+            "liked": post.likes.filter(id=self.request.user.id).exists(),
+            "cat_menu": Category.objects.all(),
+            "small_cat": Post.objects.filter(status='1').order_by('-post_date')[:5],
+            "comments": post.comments.all().order_by('-created_at'),  # Ajout explicite des commentaires
+        })
         return context
     
-def article_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    
-        # Récupérer les 5 derniers articles publiés
-    small_cat = Post.objects.filter(status='1').order_by('-post_date')[:5]
-    
-    return render(request, 'article_detail.html', {'post': post, 'small_cat': small_cat})
-
 
 def search_articles(request):
     query = request.GET.get('q')  # Récupère le texte de recherche
@@ -160,17 +183,18 @@ class AddPostView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AddCommentView(CreateView):
+class AddCommentView(LoginRequiredMixin, CreateView):
     model = Comment
+    form_class = CommentForm
     template_name = 'add_comment.html'
-    fields = ('name', 'body')
-
+    
     def form_valid(self, form):
+        form.instance.user = self.request.user
         form.instance.post_id = self.kwargs['pk']
         return super().form_valid(form)
-
+    
     def get_success_url(self):
-        return reverse('article_detail', kwargs={'pk': self.kwargs['pk']})  
+        return reverse('article-detail', kwargs={'pk': self.kwargs['pk']})
 
 
 

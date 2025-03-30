@@ -1,93 +1,326 @@
-{% extends "base.html" %} {% block content %}
-<div class="container-fluid vh-100">
-  <div class="row h-100">
-    <!-- Main content (left side) -->
-    <div class="col-md-9 h-100 d-flex flex-column">
-      <div class="d-flex justify-content-between align-items-center mb-4 pt-4">
-        <h1>Forum Discussions</h1>
-        <a href="{% url 'forum:create_topic' %}" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Nouveau Sujet
-        </a>
-      </div>
+{% extends "base.html" %} {% load static %} {% block content %}
+<!-- Forum List Template -->
 
-      <div class="list-group flex-grow-1 overflow-auto">
-        {% for topic in topics %}
-        <div class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <div>
-              <h5 class="mb-1">
-                <a href="{% url 'forum:topic_detail' topic.pk %}"
-                  >{{ topic.title }}</a
-                >
-              </h5>
-              <small class="text-muted">
-                By <strong>{{ topic.author.username }}</strong> in
-                <span class="badge bg-secondary"
-                  >{{ topic.category.name }}</span
-                >
-                <!-- Ceci devrait déjà fonctionner -->
-              </small>
-            </div>
-            <div class="text-end">
-              <span class="badge bg-success me-1">
-                <i class="fas fa-arrow-up"></i> {{ topic.total_upvotes }}
-              </span>
-              <span class="badge bg-danger me-1">
-                <i class="fas fa-arrow-down"></i> {{ topic.total_downvotes }}
-              </span>
-              <span class="badge bg-primary">
-                <i class="fas fa-comment"></i> {{ topic.replies.count }}
-              </span>
-            </div>
-          </div>
-        </div>
-        {% empty %}
-        <div class="alert alert-info">No topics available yet.</div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Sidebar (right side) -->
-    <div class="col-md-3 h-100 py-4 border-start">
-      <div class="sticky-top pt-3">
-        <h4>Catégories</h4>
-        <div class="list-group">
-          <a
-            href="{% url 'forum:topic_list' %}"
-            class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}"
-          >
-            Toutes les catégories
-          </a>
-          {% for category in categories %}
-          <a
-            href="{% url 'forum:topic_list' %}?category={{ category.id }}"
-            class="list-group-item list-group-item-action {% if request.GET.category|add:'0' == category.id %}active{% endif %}"
-          >
-            {{ category.name }}
-            <span class="badge bg-primary float-end"
-              >{{ category.topics.count }}</span
+<div class="container-fluid px-0">
+  <div class="full-height-container">
+    <div class="forum-content">
+      <div class="container mt-4 mb-5">
+        <div class="row">
+          <!-- Main content (left side) -->
+          <div class="col-md-9 pe-lg-4">
+            <div
+              class="d-flex justify-content-between align-items-center mb-4 col-12"
             >
-          </a>
-          {% empty %}
-          <div class="list-group-item text-muted">
-            Aucune catégorie disponible
+              <h1 class="forum-main-title">Forum de discussions</h1>
+              <a
+                href="{% url 'forum:create_topic' %}"
+                class="btn-primary-forum"
+              >
+                <i class="fas fa-plus me-2"></i> Nouveau sujet
+              </a>
+            </div>
+
+            <div
+              class="topics-container"
+              data-aos="fade-down"
+              data-aos-delay="200"
+            >
+              {% for topic in topics %}
+              <div class="topic-card">
+                <div class="topic-main">
+                  <div class="topic-badge">
+                    <span
+                      class="category-badge"
+                      style="background-color: {{ topic.category.color|default:'#6c757d' }};"
+                    >
+                      {{ topic.category.name }}
+                    </span>
+                  </div>
+                  <div class="topic-content">
+                    <h3 class="topic-title">
+                      <a href="{% url 'forum:topic_detail' topic.pk %}"
+                        >{{ topic.title }}</a
+                      >
+                    </h3>
+                    <div class="topic-meta">
+                      <span class="author">
+                        <i class="fas fa-user-circle me-1"></i> {{ topic.author.username }}
+                      </span>
+                      <span class="date">
+                        <i class="far fa-clock me-1"></i> {{ topic.created_at|timesince }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="topic-stats">
+                  <div
+                    class="stat upvotes"
+                    data-bs-toggle="tooltip"
+                    title="Upvotes"
+                  >
+                    <i class="fas fa-arrow-up"></i>
+                    <span>{{ topic.total_upvotes }}</span>
+                  </div>
+                  <div
+                    class="stat downvotes"
+                    data-bs-toggle="tooltip"
+                    title="Downvotes"
+                  >
+                    <i class="fas fa-arrow-down"></i>
+                    <span>{{ topic.total_downvotes }}</span>
+                  </div>
+                  <div
+                    class="stat comments"
+                    data-bs-toggle="tooltip"
+                    title="Commentaires"
+                  >
+                    <i class="fas fa-comment-dots"></i>
+                    <span>{{ topic.replies.count }}</span>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <div class="no-topics">
+                <i class="far fa-folder-open"></i>
+                <h4>Aucun sujet pour le moment</h4>
+                <p>Soyez le premier à créer une discussion !</p>
+                <a
+                  href="{% url 'forum:create_topic' %}"
+                  class="btn-primary-forum"
+                >
+                  <i class="fas fa-plus me-2"></i> Nouveau sujet
+                </a>
+              </div>
+              {% endfor %}
+            </div>
           </div>
-          {% endfor %}
+          <!-- Fin col-md-9 -->
+
+          <style>
+            .topics-container {
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+            }
+
+            .topic-card {
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+              transition: all 0.3s ease;
+              display: flex;
+              justify-content: space-between;
+              padding: 1.5rem;
+              border-left: 4px solid transparent;
+            }
+
+            .topic-card:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+              border-left-color: #ffb81a;
+            }
+
+            .topic-main {
+              display: flex;
+              gap: 1rem;
+              align-items: flex-start;
+            }
+
+            .topic-content {
+              flex: 1;
+            }
+
+            .topic-title {
+              font-size: 1.1rem;
+              margin: 0 0 0.5rem 0;
+            }
+
+            .topic-title a {
+              color: #212529;
+              text-decoration: none;
+              transition: color 0.2s;
+            }
+
+            .topic-title a:hover {
+              color: #ffb81a;
+            }
+
+            .topic-meta {
+              display: flex;
+              gap: 1rem;
+              font-size: 0.85rem;
+              color: #6c757d;
+            }
+
+            .topic-meta i {
+              margin-right: 0.3rem;
+            }
+
+            .category-badge {
+              display: inline-block;
+              padding: 0.35em 0.65em;
+              font-size: 0.75em;
+              font-weight: 700;
+              line-height: 1;
+              color: white;
+              text-align: center;
+              white-space: nowrap;
+              vertical-align: baseline;
+              border-radius: 0.25rem;
+            }
+
+            .topic-stats {
+              display: flex;
+              gap: 1rem;
+              align-items: center;
+            }
+
+            .stat {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-width: 40px;
+              padding: 0.5rem;
+              border-radius: 8px;
+              font-size: 0.9rem;
+              font-weight: 500;
+            }
+
+            .stat i {
+              font-size: 1rem;
+              margin-bottom: 0.2rem;
+            }
+
+            .upvotes {
+              background-color: rgba(40, 167, 69, 0.1);
+              color: #28a745;
+            }
+
+            .downvotes {
+              background-color: rgba(220, 53, 69, 0.1);
+              color: #dc3545;
+            }
+
+            .comments {
+              background-color: rgba(13, 110, 253, 0.1);
+              color: #0d6efd;
+            }
+
+            .no-topics {
+              text-align: center;
+              padding: 3rem 2rem;
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .no-topics i {
+              font-size: 3rem;
+              color: #adb5bd;
+              margin-bottom: 1rem;
+            }
+
+            .no-topics h4 {
+              color: #343a40;
+              margin-bottom: 0.5rem;
+            }
+
+            .no-topics p {
+              color: #6c757d;
+              margin-bottom: 1.5rem;
+            }
+
+            @media (max-width: 768px) {
+              .topic-card {
+                flex-direction: column;
+                gap: 1rem;
+              }
+
+              .topic-stats {
+                justify-content: flex-start;
+              }
+            }
+          </style>
+
+          <!-- Sidebar (right side) -->
+
+          <div class="col-md-3 ps-lg-4">
+            <div class="sticky-top pt-3">
+              <div
+                class="widgets-container"
+                data-aos="fade-up"
+                data-aos-delay="200"
+              >
+                <!-- Search Widget -->
+                <div class="search-widget widget-item">
+                  <h3 class="widget-title">Search</h3>
+                  <form action="">
+                    <input type="text" />
+                    <button type="submit" title="Search">
+                      <i class="bi bi-search"></i>
+                    </button>
+                  </form>
+                </div>
+                <!--/Search Widget -->
+
+                <!-- Categories Widget -->
+                <div class="categories-widget widget-item">
+                  <h3 class="widget-title">Catégories</h3>
+                  <div class="category-list">
+                    <a
+                      href="/forum/"
+                      class="category-item {% if not request.GET.category %}active{% endif %}"
+                    >
+                      <h6>Toutes les catégories</h6>
+                    </a>
+                    {% for category in categories %}
+                    <a
+                      href="?category={{ category.slug }}"
+                      class="category-item {% if request.GET.category == category.slug %}active{% endif %}"
+                    >
+                      {{ category.name }}
+                    </a>
+                    {% empty %}
+                    <div class="no-category">Aucune catégorie disponible</div>
+                    {% endfor %}
+                  </div>
+                  <!--/Categories Widget -->
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  {% endblock %} {% block extra_css %}
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    .full-height-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .forum-content {
+      flex: 1;
+      padding: 20px 0;
+      background-color: #f8f9fa;
+    }
+
+    .sticky-top {
+      top: 20px;
+    }
+
+    .container-fluid {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  </style>
 </div>
-
-<style>
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-  }
-  .sticky-top {
-    top: 20px;
-  }
-</style>
-
 {% endblock %}

@@ -1,94 +1,275 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="card mb-4">
-        <div class="card-header bg-light">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">{{ topic.title }}</h2>
-                {% if request.user == topic.author or request.user.is_superuser %}
-                <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="fas fa-trash"></i> Delete
-                </a>
-                {% endif %}
-            </div>
-            <small class="text-muted">
-                Posted by {{ topic.author.username }} on {{ topic.created_at|date:"d/m/Y H:i" }}
-                in <span class="badge bg-secondary">{{ topic.category.name }}</span>
-            </small>
-        </div>
-        <div class="card-body">
-            <div class="mb-4">{{ topic.content|linebreaks }}</div>
-            
-            <div class="d-flex justify-content-start gap-2 mb-3">
-                <form method="post" action="{% url 'forum:upvote_topic' topic.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-success">
-                        <i class="fas fa-arrow-up"></i> {{ topic.total_upvotes }}
-                    </button>
-                </form>
-                <form method="post" action="{% url 'forum:downvote_topic' topic.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-arrow-down"></i> {{ topic.total_downvotes }}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+<main class="main">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Blog Details Section -->
+        <section id="blog-details" class="blog-details section">
+          <div class="container" data-aos="fade-up">
+            <article class="article">
+              <div
+                class="article-content"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                <div class="content">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <h2 class="mb-0">{{ topic.title }}</h2>
+                    {% if request.user == topic.author or request.user.is_superuser %}
+                    <a
+                      href="#"
+                      class="btn btn-sm btn-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteModal"
+                    >
+                      <i class="fas fa-trash"></i> Supprimer
+                    </a>
+                    {% endif %}
+                  </div>
 
-    <h3 class="mb-3">Replies ({{ topic.replies.count }})</h3>
-    
-    {% for reply in topic.replies.all %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex justify-content-between mb-2">
-                <strong>{{ reply.author.username }}</strong>
-                <small class="text-muted">{{ reply.created_at|date:"d/m/Y H:i" }}</small>
-            </div>
-            <p>{{ reply.content|linebreaks }}</p>
-            <form method="post" action="{% url 'forum:like_reply' reply.id %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-thumbs-up"></i> {{ reply.total_likes }}
-                </button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
-
-    <div class="card mt-4">
-        <div class="card-header">
-            <h4>Add Reply</h4>
-        </div>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <textarea name="content" class="form-control" rows="4" required></textarea>
+                  <blockquote>
+                    <p>{{ topic.content|linebreaks }}</p>
+                    <small class="text-muted">
+                      Posted by {{ topic.author.username }} on {{ topic.created_at|date:"d/m/Y H:i" }} in
+                      <span class="badge bg-secondary"
+                        >{{ topic.category.name }}</span
+                      >
+                    </small>
+                    <div class="d-flex justify-content-start gap-2 mb-3">
+                      <form
+                        method="post"
+                        action="{% url 'forum:upvote_topic' topic.id %}"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-success"
+                        >
+                          <i class="bi bi-hand-thumbs-up"></i> {{ topic.total_upvotes }}
+                        </button>
+                      </form>
+                      <form
+                        method="post"
+                        action="{% url 'forum:downvote_topic' topic.id %}"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-danger"
+                        >
+                          <i class="bi bi-hand-thumbs-down"></i> {{ topic.total_downvotes }}
+                        </button>
+                      </form>
+                    </div>
+                  </blockquote>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    </div>
-</div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <!-- /Blog Details Section -->
+      </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+      <!-- Replies Section -->
+      <section id="blog-comments" class="blog-comments section">
+      <div class="section-header">
+        <h3>
+          Discussions <span class="comment-count">({{ topic.replies.count }})</span>
+        </h3>
+      </div>
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="blog-comments-3">
+            <div class="comments-wrapper">
+              {% for reply in topic.replies.all %} 
+              {% if not reply.parent_reply %} {# Affiche seulement les réponses de premier niveau #} 
+              {% include "forum/partials/reply_item.html" with reply=reply %} 
+              {% endif %} 
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- Blog Comment Form Section -->
+            <section
+              id="reply-form-container"
+              class="blog-comment-form section"
+            >
+              <div class="container" data-aos="fade-up" data-aos-delay="100">
+                <form method="POST" role="form" id="reply-form">
+                  {% csrf_token %}
+                  <div class="section-header">
+                    <h3>Vous en pensez quoi?</h3>
+                    <p>
+                      C'est ici que vous donnez votre opinion sur le sujet.
+                      N'hésitez pas à partager vos idées et suggestions.
+                    </p>
+                  </div>
+
+                  <div class="col-12 form-group">
+                    <label for="comment"
+                      >Votre avis <span style="color: red">*</span></label
+                    >
+                    <input
+                      type="hidden"
+                      name="parent_reply"
+                      id="parent-reply-input"
+                      value=""
+                    />
+                    <textarea
+                      class="form-control"
+                      name="content"
+                      rows="5"
+                      placeholder="Ecrivez votre avis..."
+                      required=""
+                    ></textarea>
+                  </div>
+
+                  <div class="col-12 text-center">
+                    <button type="submit" class="btn-submit">
+                      Postez votre avis
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </section>
+            <!-- /Blog Comment Form Section -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h5 class="modal-title">Confirmez la suppression</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this topic and all its replies?
+              Êtes-vous sûr de vouloir supprimer ce sujet et toutes ses réponses?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a href="{% url 'forum:delete_topic' topic.id %}" class="btn btn-danger">Delete</a>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Annuler
+              </button>
+              <a
+                href="{% url 'forum:delete_topic' topic.id %}"
+                class="btn btn-danger"
+                >supprimer</a
+              >
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+</main>
+<style>
+  .reply-form-container {
+    transition: all 0.3s ease;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border-left: 3px solid #0d6efd;
+    margin-top: 10px;
+  }
+
+  .reply-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .reply-form-container textarea {
+    transition: height 0.2s ease;
+  }
+
+  .reply-form-container textarea:focus {
+    height: 100px;
+  }
+
+  .comment-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .action-btn:hover {
+    background-color: #f0f0f0;
+  }
+
+  .child-replies {
+    margin-left: 30px;
+    border-left: 2px solid #e9ecef;
+    padding-left: 15px;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Gestion du clic sur "Répondre"
+    document.querySelectorAll(".reply-button").forEach((button) => {
+      button.addEventListener("click", function () {
+        const replyId = this.getAttribute("data-reply-id");
+        const replyAuthor = this.getAttribute("data-reply-author");
+
+        // Cache tous les autres formulaires ouverts
+        document.querySelectorAll(".reply-form-container").forEach((form) => {
+          form.style.display = "none";
+        });
+
+        // Affiche le formulaire correspondant
+        const formContainer = document.getElementById(`reply-form-${replyId}`);
+        formContainer.style.display = "block";
+
+        // Met à jour le placeholder avec le nom de l'auteur
+        const textarea = formContainer.querySelector("textarea");
+        textarea.placeholder = `Réponse à @${replyAuthor}...`;
+        textarea.focus();
+
+        // Fait défiler doucement jusqu'au formulaire
+        formContainer.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+      });
+    });
+
+    // Gestion du clic sur "Annuler"
+    document.querySelectorAll(".cancel-reply").forEach((button) => {
+      button.addEventListener("click", function () {
+        const replyId = this.getAttribute("data-reply-id");
+        document.getElementById(`reply-form-${replyId}`).style.display = "none";
+      });
+    });
+  });
+</script>
+
 {% endblock %}

@@ -1,12 +1,8 @@
-{% extends 'base.html' %} 
-{% load static %}
-{% block title %}Comment on Blog Post {%endblock%}
+{% extends 'base.html' %} {% load static %} {% block title %}Comment on Blog
+Post {%endblock%} {% block content %}
 
-{% block content %} 
-
- 
-
-<section id="blog-comment-form" class="blog-comment-form section">
+{% if user.is_authenticated %}
+<section id="id_content" class="blog-comment-form section">
   <div class="container" data-aos="fade-up" data-aos-delay="100">
     <form method="POST" role="form">
       {% csrf_token %}
@@ -14,20 +10,23 @@
         <h3>Commentaire</h3>
       </div>
       <div class="row gy-3">
-        <div class="col-md-6 form-group">
-          <label for="{{ form.name.id_for_label }}">Votre nom complet *</label>
-         
-          <input type="text" name="name" class="form-control" id="name" placeholder="Rentrez votre nom"
-            required=""/>
-        </div>
         <div class="col-12 form-group">
-          <label for="{{ form.body.id_for_label }}">Votre commentaire *</label>
-          
-          <textarea class="form-control" name="body" id="comment" rows="5" placeholder="Dites-nous ce que vous pensez..." required=""></textarea>
+          <label for="id_content"
+            >Votre commentaire <span style="color: red">*</span></label
+          >
+
+          <textarea
+            class="form-control"
+            name="content"
+            id="id_content"
+            rows="5"
+            placeholder="Votre commentaire..."
+            required=""
+          ></textarea>
         </div>
         <div class="col-12 text-center">
           <button type="submit" class="btn-submit">
-            Post Comment
+            Poster le commentaire
           </button>
         </div>
       </div>
@@ -35,5 +34,6 @@
   </div>
 </section>
 
-
-{% endblock %}
+{% else %}
+<p>Veuillez <a href="{% url 'login' %}">vous connecter</a> pour commenter.</p>
+{% endif %} {% endblock %}

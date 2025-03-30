@@ -28,6 +28,20 @@ class Profile(models.Model):
     
     def get_absolute_url(self):
         return reverse('home')
+    
+    def get_comment_count(self):
+        return self.user.comment_set.count()
+    
+    def get_post_count(self):
+        return self.user.post_set.count()
+    
+    def get_last_activity(self):
+        last_post = self.user.post_set.order_by('-date_posted').first()
+        last_comment = self.user.comment_set.order_by('-date_added').first()
+        
+        if last_post and last_comment:
+            return max(last_post.date_posted, last_comment.date_added)
+        return last_post.date_posted if last_post else last_comment.date_added
 
 
 class Post(models.Model):
@@ -48,7 +62,7 @@ class Post(models.Model):
     title = models.CharField(max_length=191)
     header_image = models.ImageField(blank=True, null=True, upload_to='images/')
     title_tag = models.CharField(max_length=191)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     body = RichTextField(blank=True, null=True)
     post_date = models.DateField(auto_now_add=True)
     category = models.CharField(max_length=191, default='')
@@ -68,18 +82,29 @@ class Post(models.Model):
         # return reverse('article_detail', args=(str(self.id)))
         return reverse('home')
 
+    @property
     def comment_count(self):
-        return self.comments.count()  # Compte
+        return self.comments.count()  # Utilise le related_name  # Compte
     
 
+# models.py
 class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    name = models.CharField(max_length=191)
-    body = models.TextField()
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return '%s - %s' % (self.post.title, self.name)
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        related_name='comments'  # Définissez explicitement le related_name
+    )
+    post = models.ForeignKey(
+        'Post',  # ou votre modèle Post
+        on_delete=models.CASCADE,
+        related_name='comments'  # Ceci crée la relation inverse
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='comment_likes', blank=True)
+    
+    def total_likes(self):
+        return self.likes.count()
 
 
 

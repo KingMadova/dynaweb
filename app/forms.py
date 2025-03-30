@@ -1,6 +1,7 @@
 from django import forms
 from .models import Post, Category, Comment
 
+
 class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,18 +40,15 @@ class EditForm(forms.ModelForm):
             'Main_Post': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('name', 'body')
+        fields = ('content',)  # Utilisez 'content' au lieu de 'body'
         widgets = {
-            'name': forms.TextInput(attrs={
+            'content': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your full name'
-            }),
-            'body': forms.Textarea(attrs={
-                'class': 'form-control',
-                'placeholder': 'Write your thoughts here...',
-                'rows': 5
+                'rows': 3,
+                'placeholder': 'Votre commentaire...'
             }),
         }

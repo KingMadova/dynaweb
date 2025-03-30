@@ -1,134 +1,160 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{%block content %}
-
+{% block content %}
 <main class="main">
-
     <!-- Page Title -->
     <div class="page-title">
-      <div class="breadcrumbs">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house"></i> Accueil</a></li>
-            <li class="breadcrumb-item"><a href="#">Categorie</a></li>
-            <li class="breadcrumb-item active current">Profil Auteur</li>
-          </ol>
-        </nav>
-      </div>
+        <div class="breadcrumbs">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house"></i> Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="#">Catégorie</a></li>
+                    <li class="breadcrumb-item active current">Profil Auteur</li>
+                </ol>
+            </nav>
+        </div>
 
-      <div class="title-wrapper">
-        <h1>{{ page_user.user.first_name }} {{ page_user.user.last_name }}</h1>
-        <p>{{ page_user.bio }}</p>
-      </div>
+        <div class="title-wrapper">
+            <h1>{{ page_user.user.get_full_name|default:page_user.user.username }}</h1>
+            {% if page_user.bio %}
+                <p>{{ page_user.bio|truncatechars:100 }}</p>
+            {% endif %}
+        </div>
     </div><!-- End Page Title -->
 
     <!-- Author Profile Section -->
     <section id="author-profile" class="author-profile section">
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="author-profile-1">
-
-          <div class="row">
-            <!-- Author Info -->
-            <div class="col-lg-4 mb-4 mb-lg-0">
-              <div class="author-card" data-aos="fade-up">
-                <div class="author-image">
-                  {% if page_user.profile_pic %} 
-                    <img src="{{ page_user.profile_pic.url }}" width: 100 class="card-img" alt="profile_pic">
-                  {% else %} 
-                    <img src="{% static 'app/images/default_profile.png' %}" width: 100 class="card-img" alt="profile_pic"> 
-                  {% endif %}
-                </div>
-
-                <div class="author-info">
-                  <h2>{{ page_user.user.first_name }} {{ page_user.user.last_name }}</h2>
-                  <p class="designation">Senior Community Manager</p>
-
-                  <div class="author-bio">
-                    {{ page_user.bio }}
-                  </div>
-                  <div class="social-links">
-                    <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Author Content -->
-            <div class="col-lg-8">
-              <div class="author-content" data-aos="fade-up" data-aos-delay="200">
-                <div class="content-header">
-                  <h3>About Me</h3>
-                </div>
-                <div class="content-body">
-                  <p>{{ page_user.bio }}</p>
-                  
-                 <!--  <div class="expertise-areas">
-                    <h4>Areas of Expertise</h4>
-                    <div class="tags">
-                      <span>Artificial Intelligence</span>
-                      <span>Cybersecurity</span>
-                      <span>Smart Home Technology</span>
-                      <span>Digital Privacy</span>
-                      <span>Consumer Electronics</span>
-                      <span>Future Tech Trends</span>
-                    </div>
-                  </div> -->
-
-                  <!-- <div class="featured-articles mt-5">
-                    <h4>Featured Articles</h4>
-                    <div class="row g-4">
-                      <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
-                        <article class="article-card">
-                          <div class="article-img">
-                            <img src="assets/img/blog/blog-post-10.webp" alt="Article" class="img-fluid">
-                          </div>
-                          <div class="article-details">
-                            <div class="post-category">Technology</div>
-                            <h5><a href="#">The Future of AI in Everyday Computing</a></h5>
-                            <div class="post-meta">
-                              <span><i class="bi bi-clock"></i> Jan 15, 2024</span>
-                              <span><i class="bi bi-chat-dots"></i> 24 Comments</span>
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="author-profile-1">
+                <div class="row">
+                    <!-- Author Info -->
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <div class="author-card" data-aos="fade-up">
+                            <div class="author-image">
+                                {% if page_user.profile_pic %}
+                                    <img src="{{ page_user.profile_pic.url }}" class="card-img img-fluid" alt="Photo de profil de {{ page_user.user.get_full_name|default:page_user.user.username }}">
+                                {% else %}
+                                    <img src="{% static 'app/images/default_profile.png' %}" class="card-img img-fluid" alt="Photo de profil par défaut">
+                                {% endif %}
                             </div>
-                          </div>
-                        </article>
-                      </div>
 
-                      <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
-                        <article class="article-card">
-                          <div class="article-img">
-                            <img src="assets/img/blog/blog-post-6.webp" alt="Article" class="img-fluid">
-                          </div>
-                          <div class="article-details">
-                            <div class="post-category">Privacy</div>
-                            <h5><a href="#">Understanding Digital Privacy in 2024</a></h5>
-                            <div class="post-meta">
-                              <span><i class="bi bi-clock"></i> Feb 3, 2024</span>
-                              <span><i class="bi bi-chat-dots"></i> 18 Comments</span>
+                            <div class="author-info">
+                                <h2>{{ page_user.user.get_full_name|default:page_user.user.username }}</h2>
+                                
+                                {% if page_user.bio %}
+                                    <div class="author-bio">
+                                        {{ page_user.bio|linebreaks }}
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="social-links mt-3">
+                                    {% if page_user.website_url %}
+                                        <a href="{{ page_user.website_url }}" target="_blank" rel="noopener noreferrer" class="globe"><i class="bi bi-globe"></i></a>
+                                    {% endif %}
+                                    {% if page_user.twitter_url %}
+                                        <a href="{{ page_user.twitter_url }}" target="_blank" rel="noopener noreferrer" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                                    {% endif %}
+                                    {% if page_user.facebook_url %}
+                                        <a href="{{ page_user.facebook_url }}" target="_blank" rel="noopener noreferrer" class="facebook"><i class="bi bi-facebook"></i></a>
+                                    {% endif %}
+                                    {% if page_user.instagram_url %}
+                                        <a href="{{ page_user.instagram_url }}" target="_blank" rel="noopener noreferrer" class="instagram"><i class="bi bi-instagram"></i></a>
+                                    {% endif %}
+                                    {% if page_user.linkedin_url %}
+                                        <a href="{{ page_user.linkedin_url }}" target="_blank" rel="noopener noreferrer" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                                    {% endif %}
+                                    {% if page_user.pinterest_url %}
+                                        <a href="{{ page_user.pinterest_url }}" target="_blank" rel="noopener noreferrer" class="pinterest"><i class="bi bi-pinterest"></i></a>
+                                    {% endif %}
+                                </div>
                             </div>
-                          </div>
-                        </article>
-                      </div>
+                        </div>
                     </div>
-                  </div> -->
-                
+
+                    <!-- Author Content -->
+                    <div class="col-lg-8">
+                        <div class="author-content" data-aos="fade-up" data-aos-delay="200">
+                            <div class="content-header">
+                                <h3>À propos</h3>
+                            </div>
+                            <div class="content-body">
+                                {% if page_user.bio %}
+                                    <p>{{ page_user.bio|linebreaks }}</p>
+                                {% else %}
+                                    <p class="text-muted">Cet auteur n'a pas encore rédigé de description.</p>
+                                {% endif %}
+                                
+                                <!-- Statistiques Auteur -->
+                                <div class="author-stats mt-8">
+                                  <div class="row">
+                                      <div class="col-md-5-mt-4" style="margin-bottom: 25px;"> 
+                                          <div class="stat-card">
+                                              <h4>Articles</h4>
+                                              <p class="count">{{ post_count }}</p>
+                                          </div>
+                                      </div>
+                                     <div class="col-md-6">
+                                          <div class="stat-card">
+                                              <h4>Actif depuis</h4>
+                                              <p>{{ page_user.user.date_joined|date:"F Y" }}</p>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="stat-card">
+                                            <h4>Commentaires</h4>
+                                            <p class="count">{{ comment_count }}</p>
+                                        </div>
+                                    </div>
+                                     
+                                  </div>
+                              </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-
-          </div>
-
         </div>
+    </section><!-- /Author Profile Section -->
+</main>
 
-      </div>
-
-    </section>
-    <!-- /Author Profile Section -->
-  </main>
-
+<style>
+    .author-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        max-width: 250px;
+        margin: 0 auto;
+        display: block;
+        border: 5px solid #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .social-links a {
+        font-size: 1.2rem;
+        margin-right: 15px;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    .stat-card .count {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 5px 0 0;
+    }
+</style>
 {% endblock %}

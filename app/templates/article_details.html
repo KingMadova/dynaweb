@@ -1,6 +1,9 @@
-{% extends 'base.html' %} {% load static %} {% block title %}
-{{ post.title_tag }}
-{%endblock %} {%block content %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title_tag }}{% endblock %}
+
+{% block content %}
 <main class="main">
   <!-- Page Title -->
   <div class="page-title">
@@ -8,9 +11,9 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#"><i class="bi bi-house"></i> Home</a>
+            <a href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
           </li>
-          <li class="breadcrumb-item"><a href="#">Category</a></li>
+          <li class="breadcrumb-item"><a href="#">{{ post.category }}</a></li>
           <li class="breadcrumb-item active current">Blog Details</li>
         </ol>
       </nav>
@@ -19,10 +22,6 @@
     <div class="title-wrapper">
       <h1>Details de l'Article</h1>
       <h3 class="title">{{ post.title }}</h3>
-      <!--   <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit
-            tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
-          </p> -->
     </div>
   </div>
   <!-- End Page Title -->
@@ -34,6 +33,7 @@
         <section id="blog-details" class="blog-details section">
           <div class="container" data-aos="fade-up">
             <article class="article">
+              {% if post.header_image %}
               <div class="hero-img" data-aos="zoom-in">
                 <img
                   src="{{ post.header_image.url }}"
@@ -41,22 +41,10 @@
                   class="img-fluid"
                   loading="lazy"
                 />
-                <div class="meta-overlay">
-                  <!--  <div class="meta-categories">
-                        <a href="#">{% url 'category-list' %}</a>
-                        <span class="divider">•</span>
-                        <span class="reading-time"
-                          ><i class="bi bi-clock"></i> 6 min read</span
-                        >
-                      </div> -->
-                </div>
               </div>
+              {% endif %}
 
-              <div
-                class="article-content"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
+              <div class="article-content" data-aos="fade-up" data-aos-delay="100">
                 <div class="content-header">
                   <h1 class="title">{{ post.title }}</h1>
 
@@ -65,50 +53,47 @@
                       {% if post.author.profile.profile_pic %}
                       <img
                         src="{{ post.author.profile.profile_pic.url }}"
-                        width="100"
-                        class="author-img"
-                        alt="Author"
+                        width="40"
+                        height="40"
+                        class="rounded-circle"
+                        alt="profile_pic"
+                        loading="lazy"
                       />
-
                       {% else %}
                       <img
-                        src="{% static 'app/images/default_profile.png' %}"
-                        width="100"
-                        class="author-img"
-                        alt="Author"
+                        src="{% static 'assets/img/default_profile.png' %}"
+                        width="40"
+                        height="40"
+                        class="rounded-circle"
+                        alt="default_pic_profile"
+                        loading="lazy"
                       />
                       {% endif %}
                       <div class="info">
-                        <h4>
-                          {{ post.author.first_name }} {{ post.author.last_name }}
-                        </h4>
-                        <span class="role">Community Manager</span>
+                        <h4>{{ post.author.get_full_name }}</h4>
+                        <span class="role">{{ post.author.profile.bio|truncatechars:30 }}</span>
                       </div>
                     </div>
                     <div class="post-meta">
-                      <span class="date"
-                        ><i class="bi bi-calendar3"></i> {{post.post_date }}</span
-                      >
+                      <span class="date">
+                        <i class="bi bi-calendar3"></i> {{ post.post_date|date:"d F Y" }}
+                      </span>
                       <span class="divider">•</span>
-                      <span class="comments"
-                        ><i class="bi bi-chat-text"></i
-                        ><a href="{% url 'add_comment' post.pk %}">
-                          {{ post.comment_count }} Commentaire(s)</a
-                        ></span
-                      >
+                      <span class="comments">
+                        <i class="bi bi-chat-text"></i>
+                        {{ post.comments.count }} Commentaire(s)
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div class="content">
-                  <p class="">{{ post.body|safe}}</p>
+                  {{ post.content|safe }}
                 </div>
               </div>
             </article>
           </div>
         </section>
-        <!-- /Blog Details Section -->
-
 
         <!-- Blog Comments Section -->
         <section id="blog-comments" class="blog-comments section">
@@ -116,71 +101,89 @@
             <div class="blog-comments-3">
               <div class="section-header">
                 <h3>
-                  Discussion
-                  <span class="comment-count">({{ post.comment_count }})</span>
+                  Commentaires
+                  <span class="divider">•</span>
+                  <span class="comment-count">({{ post.comments.count }})</span>
                 </h3>
               </div>
-
-              {% for comment in post.comments.all %}
+        
               <div class="comments-wrapper">
+                {% for comment in post.comments.all %}
                 <article class="comment-card">
                   <div class="comment-header">
                     <div class="user-info">
-                      {% if comment.post.author.profile.profile_pic %}
+                      {% if comment.user.profile.profile_pic %}
                       <img
-                        src="{{ comment.post.author.profile.profile_pic.url }}"
-                        width="100"
-                        class="card-img"
+                        src="{{ comment.user.profile.profile_pic.url }}"
+                        width="40"
+                        height="40"
+                        class="rounded-circle"
                         alt="profile_pic"
                         loading="lazy"
                       />
                       {% else %}
                       <img
-                        src="{% static 'app/images/default_profile.png' %}"
-                        width="100"
-                        class="card-img"
+                        src="{% static 'assets/img/default_profile.png' %}"
+                        width="40"
+                        height="40"
+                        class="rounded-circle"
                         alt="default_pic_profile"
                         loading="lazy"
                       />
                       {% endif %}
                       <div class="meta">
-                        <h4 class="name">{{ comment.name }}</h4>
+                        <h4 class="name">{{ comment.user.get_full_name }}</h4>
                         <span class="date">
-                          <i class="bi bi-calendar3"></i>{{ comment.date_added
-                          }}
+                          <i class="bi bi-calendar3"></i> {{ comment.created_at|date:"d F Y" }}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div class="comment-content">
-                    <p>{{ comment.body }}</p>
+                    <p>{{ comment.content|linebreaks }}</p>
                   </div>
-                  <div
-                    action="{% url 'like_post' post.pk %}"
-                    method="POST"
-                    class="comment-actions"
-                  >
-                    {% csrf_token %}
-                    <button class="action-btn reply-btn">
+                  <div class="comment-actions">
+                    <form method="post" action="{% url 'like_comment' comment.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="action-btn like-btn">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                        <span>{{ comment.likes.count }}</span>
+                      </button>
+                    </form>
+                    <button class="action-btn reply-btn" data-comment-id="{{ comment.id }}">
                       <i class="bi bi-reply"></i>
-                      <span
-                        ><a href="{% url 'add_comment' post.pk %}"
-                          >Répondre</a
-                        ></span
-                      >
+                      <span>Répondre</span>
                     </button>
                   </div>
                 </article>
+                {% empty %}
+                <p>
+                  <i class="bi bi-chat-text"></i> Aucun commentaire pour l'instant.
+                </p>
+                {% endfor %}
               </div>
-              {% empty %}
-              <p>
-                <i class="bi bi-chat-text"></i> Aucune discussion pour
-                l’instant.
-              </p>
-              <span class="comments">
-                <a href="{% url 'add_comment' post.pk %}">Discutez</a>
-              </span>
-              {% endfor %}
+
+              <!-- Comment Form -->
+
+              <section class="blog-comment-form section">
+                <div  data-aos="fade-up" data-aos-delay="100">
+                  <form method="POST" role="form" action="{% url 'add_comment' post.pk %}">
+                    {% csrf_token %}
+                    <h3 style="margin-bottom: 25px">Ajouter un Commentaire</h3>
+                    {% if user.is_authenticated %}
+                      <div class="col-6 text-start">
+                        <button type="submit" class="btn-submit">
+                          Cliquez ici
+                        </button>
+                      </div>
+                  </form>
+                  {% else %}
+                <p>Veuillez <a href="{% url 'login' %}">vous connecter</a> pour commenter.</p>
+                {% endif %}
+                </div>
+              </section>
+
+              
             </div>
           </div>
         </section>
@@ -188,11 +191,4 @@
     </div>
   </div>
 </main>
-
-<div class="container">
-  <div class="row">
-    <div class="col-lg-8"></div>
-  </div>
-</div>
-
 {% endblock %}

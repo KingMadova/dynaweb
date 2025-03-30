@@ -2,65 +2,154 @@
 
 {% block content %}
 
-
-<form method="post" class="mt-4">
-    {% csrf_token %}
+<style>
+    /* Style général du formulaire */
+    .forum-form {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
     
-    <!-- Champ Catégorie -->
-    <div class="mb-3">
-        <label for="{{ form.category.id_for_label }}" class="form-label">Catégorie</label>
-        <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}" 
-                class="form-select {% if form.category.errors %}is-invalid{% endif %}">
-            {% for choice in form.category.field.choices %}
-                <option value="{{ choice.0 }}" {% if form.category.value == choice.0 %}selected{% endif %}>
-                    {{ choice.1 }}
-                </option>
-            {% endfor %}
-        </select>
-        {% if form.category.errors %}
-            <div class="invalid-feedback">
-                {{ form.category.errors|join:", " }}
-            </div>
-        {% endif %}
-    </div>
+    .form-label {
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #ffb81a;
+        box-shadow: 0 0 0 0.25rem rgba(255, 184, 26, 0.25);
+    }
+    
+    /* Style des boutons */
+    .btn-primary {
+        background-color: #ffb81a;
+        border-color: #ffb81a;
+        color: #000;
+        font-weight: 500;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #e6a517;
+        border-color: #e6a517;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 184, 26, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: #e0e0e0;
+        color: #495057;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        border-color: #d0d0d0;
+        transform: translateY(-2px);
+    }
+    
+    /* Validation des champs */
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Amélioration du textarea */
+    textarea.form-control {
+        min-height: 200px;
+        resize: vertical;
+    }
+    
+    /* Style pour les icônes */
+    .fa-paper-plane, .fa-times {
+        font-size: 0.9em;
+    }
+</style>
 
-    <!-- Champ Titre -->
-    <div class="mb-3">
-        <label for="{{ form.title.id_for_label }}" class="form-label">Titre</label>
-        <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
-               class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
-               value="{{ form.title.value|default:'' }}"
-               placeholder="Donnez un titre clair à votre sujet">
-        {% if form.title.errors %}
-            <div class="invalid-feedback">
-                {{ form.title.errors|join:", " }}
-            </div>
-        {% endif %}
-    </div>
+<div class="forum-form">
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        
+        <!-- Champ Catégorie -->
+        <div class="mb-4">
+            <label for="{{ form.category.id_for_label }}" class="form-label">Catégorie</label>
+            <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}" 
+                    class="form-select {% if form.category.errors %}is-invalid{% endif %}">
+                {% for choice in form.category.field.choices %}
+                    <option value="{{ choice.0 }}" {% if form.category.value == choice.0 %}selected{% endif %}>
+                        {{ choice.1 }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.category.errors %}
+                <div class="invalid-feedback">
+                    {{ form.category.errors|join:", " }}
+                </div>
+            {% endif %}
+        </div>
 
-    <!-- Champ Contenu -->
-    <div class="mb-3">
-        <label for="{{ form.content.id_for_label }}" class="form-label">Contenu</label>
-        <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}"
-                  class="form-control {% if form.content.errors %}is-invalid{% endif %}" 
-                  rows="6"
-                  placeholder="Développez votre sujet ici...">{{ form.content.value|default:'' }}</textarea>
-        {% if form.content.errors %}
-            <div class="invalid-feedback">
-                {{ form.content.errors|join:", " }}
-            </div>
-        {% endif %}
-    </div>
+        <!-- Champ Titre -->
+        <div class="mb-4">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Titre</label>
+            <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+                   class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                   value="{{ form.title.value|default:'' }}"
+                   placeholder="Donnez un titre clair à votre sujet">
+            {% if form.title.errors %}
+                <div class="invalid-feedback">
+                    {{ form.title.errors|join:", " }}
+                </div>
+            {% endif %}
+        </div>
 
-    <!-- Bouton de soumission -->
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="submit" class="btn btn-primary me-md-2">
-            <i class="fas fa-paper-plane me-2"></i> Publier
-        </button>
-        <a href="{% url 'forum:forum_list' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-times me-2"></i> Annuler
-        </a>
-    </div>
-</form>
+        <!-- Champ Contenu -->
+        <div class="mb-4">
+            <label for="{{ form.content.id_for_label }}" class="form-label">Contenu</label>
+            <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}"
+                      class="form-control {% if form.content.errors %}is-invalid{% endif %}" 
+                      rows="6"
+                      placeholder="Développez votre sujet ici...">{{ form.content.value|default:'' }}</textarea>
+            {% if form.content.errors %}
+                <div class="invalid-feedback">
+                    {{ form.content.errors|join:", " }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Bouton de soumission -->
+        <div class="d-flex justify-content-end gap-3 pt-2">
+            <a href="{% url 'forum:forum_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-times me-2"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane me-2"></i> Publier
+            </button>
+        </div>
+    </form>
+</div>
 <br/>
 {% endblock %}

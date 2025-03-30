@@ -4,18 +4,52 @@ from django import forms
 from app.models import Profile
 
 class ProfilePageForm(forms.ModelForm):
-	class Meta:
-		model = Profile
-		fields = ('bio', 'profile_pic', 'website_url', 'facebook_url', 'twitter_url', 'instagram_url', 'pinterest_url')
-			
-		widgets = {
-				'bio': forms.Textarea(attrs={'class': 'form-control'}),
-				'website_url': forms.TextInput(attrs={'class': 'form-control'}),
-				'facebook_url': forms.TextInput(attrs={'class': 'form-control'}),
-				'twitter_url': forms.TextInput(attrs={'class': 'form-control'}),
-				'instagram_url': forms.TextInput(attrs={'class': 'form-control'}),
-				'pinterest_url': forms.TextInput(attrs={'class': 'form-control'}),
-		}
+    class Meta:
+        model = Profile
+        fields = ('bio', 'profile_pic', 'website_url', 'facebook_url', 
+                 'twitter_url', 'instagram_url', 'pinterest_url')
+        
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Parlez un peu de vous...',
+                'rows': 5
+            }),
+            'profile_pic': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'website_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://votresite.com'
+            }),
+            'facebook_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://facebook.com/votrepseudo'
+            }),
+            'twitter_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://twitter.com/votrepseudo'
+            }),
+            'instagram_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://instagram.com/votrepseudo'
+            }),
+            'pinterest_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://pinterest.com/votrepseudo'
+            }),
+        }
+        
+        labels = {
+            'bio': 'Parlez un peu de vous',
+            'profile_pic': 'Photo de profil',
+            'website_url': 'Site Web personnel',
+            'facebook_url': 'Profil Facebook',
+            'twitter_url': 'Profil Twitter',
+            'instagram_url': 'Profil Instagram',
+            'pinterest_url': 'Profil Pinterest',
+        }
 
 
 class SignUpForm(UserCreationForm):

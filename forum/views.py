@@ -18,7 +18,16 @@ class ForumListView(ListView):
     context_object_name = "topics"
 
     def get_queryset(self):
-        return Topic.objects.select_related('author', 'category').prefetch_related('replies')
+        queryset = Topic.objects.select_related('author', 'category').prefetch_related('replies')
+        category_slug = self.request.GET.get('category')
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = ForumCategory.objects.all()
+        return context
 
 
 class TopicDetailView(DetailView):
@@ -33,6 +42,9 @@ class TopicDetailView(DetailView):
             reply = form.save(commit=False)
             reply.topic = self.object
             reply.author = request.user
+            parent_reply_id = request.POST.get('parent_reply')
+            if parent_reply_id:
+                reply.parent_reply = Reply.objects.get(id=parent_reply_id)
             reply.save()
         return redirect('forum:topic_detail', pk=self.object.pk)
 
@@ -73,6 +85,25 @@ def add_reply(request, topic_id):
         form = ReplyForm()
     return render(request, "forum/add_reply.html", {"form": form, "topic": topic})
 
+
+@login_required
+def add_reply_to_reply(request, parent_reply_id):
+    parent_reply = get_object_or_404(Reply, id=parent_reply_id)
+    
+    if request.method == "POST":
+        form = ReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.author = request.user
+            reply.topic = parent_reply.topic
+            reply.parent_reply = parent_reply
+            reply.save()
+            # Redirige vers l'ancre du commentaire parent
+            return redirect(f'{reverse("forum:topic_detail", kwargs={"pk": parent_reply.topic.id})}#reply-{parent_reply.id}')
+    
+    return redirect('forum:topic_detail', pk=parent_reply.topic.id)
+
+
 @user_passes_test(is_moderator)
 def delete_topic(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
@@ -112,11 +143,14 @@ def like_reply(request, reply_id):
 def topic_list(request):
     category_id = request.GET.get('category')
     
-    topics = Topic.objects.all()
+    topics = Topic.objects.select_related('author', 'category').all()
     if category_id:
-        topics = topics.filter(category_id=category_id)  # Assurez-vous que le champ s'appelle bien 'category' dans le modèle Topic
+        topics = topics.filter(category_id=category_id)
     
-    categories = ForumCategory.objects.annotate(topic_count=Count('topic'))  # Modifier ici
+    # Utilisez 'topics' comme nom de relation (correspond au related_name)
+    categories = ForumCategory.objects.annotate(
+        topic_count=Count('topics')  # Exactement le même nom que le related_name
+    ).order_by('name')
     
     return render(request, 'forum/topic_list.html', {
         'topics': topics,

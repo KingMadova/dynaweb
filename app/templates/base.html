@@ -102,80 +102,294 @@
       <div class="nav-wrap">
         <div class="container d-flex justify-content-center position-relative">
           <nav id="navmenu" class="navmenu">
-            <ul>
-              <li><a href="{% url 'home' %}" class="#">Accueil</a></li>
-              <li><a href="{% url 'about' %}">A propos</a></li>
-              <li><a href="{% url 'contact' %}">Contact</a></li>
-              <li><a href="{% url 'forum:forum_list' %}">Forum</a></li>
-
+            <ul class="modern-nav" id="main-nav">
+              <li><a href="{% url 'home' %}" class="nav-link" data-nav="home"><i class="fas fa-home"></i> Accueil</a></li>
+              <li><a href="{% url 'about' %}" class="nav-link" data-nav="about"><i class="fas fa-info-circle"></i> A propos</a></li>
+              <li><a href="{% url 'contact' %}" class="nav-link" data-nav="contact"><i class="fas fa-envelope"></i> Contact</a></li>
+              <li><a href="{% url 'forum:forum_list' %}" class="nav-link" data-nav="forum"><i class="fas fa-comments"></i> Forum</a></li>
               {% if user.is_authenticated %}
               <li class="dropdown">
-                <a href="#">
-                  <span>{{ user.first_name }} {{ user.last_name }}</span>
-                  <i class="bi bi-chevron-down toggle-dropdown"></i>
-                </a>
-                <ul>
-                  <li>
-                    <a href="{% url 'edit_profile' %}"
-                      ><i class="bi bi-gear"></i> Modifier les paramètres du
-                      profil</a
-                    >
-                  </li>
-                  {% if user.profile.id %}
-                  <li>
-                    <a href="{% url 'edit_profile_page' user.profile.id %}"
-                      ><i class="bi bi-person-bounding-box"></i> Modifier le
-                      profil</a
-                    >
-                  </li>
-                  <li>
-                    <a href="{% url 'show_profile_page' user.profile.id %}"
-                      ><i class="bi bi-person"></i> Voir le profil</a
-                    >
-                  </li>
-                  {% else %}
-                  <li>
-                    <a href="{% url 'create_profile_page' %}"
-                      ><i class="bi bi-person-plus"></i> Créer un profil</a
-                    >
-                  </li>
-                  {% endif %} {% if request.user.is_superuser %}
-                  <li>
-                    <a href="{% url 'add_category' %}"
-                      ><i class="bi bi-folder-plus"></i> Ajouter une
-                      catégorie</a
-                    >
-                  </li>
-                  <li>
-                    <a href="{% url 'add_post' %}"
-                      ><i class="bi bi-file-earmark-plus"></i> Ajouter un
-                      article</a
-                    >
-                  </li>
-                  {% endif %}
-                  <li>
-                    <form
-                      action="{% url 'logout' %}"
-                      method="POST"
-                      style="display: inline"
-                    >
-                      {% csrf_token %}
-                      <button
-                        type="submit"
-                        class="login-btn"
-                        style="cursor: pointer"
-                      >
-                        Logout
-                      </button>
-                    </form>
-                  </li>
-                </ul>
+                  <a href="#" class="nav-link user-menu">
+                      <span class="user-avatar"><i class="fas fa-user-circle"></i></span>
+                      <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+                      <i class="fas fa-chevron-down dropdown-arrow"></i>
+                  </a>
+                  <ul class="dropdown-menu">
+                      <li>
+                          <a href="{% url 'edit_profile' %}" class="dropdown-item">
+                              <i class="fas fa-cog"></i> Paramètres du profil
+                          </a>
+                      </li>
+                      {% if user.profile.id %}
+                      <li>
+                          <a href="{% url 'edit_profile_page' user.profile.id %}" class="dropdown-item">
+                              <i class="fas fa-user-edit"></i> Modifier le profil
+                          </a>
+                      </li>
+                      <li>
+                          <a href="{% url 'show_profile_page' user.profile.id %}" class="dropdown-item">
+                              <i class="fas fa-user"></i> Voir le profil
+                          </a>
+                      </li>
+                      {% else %}
+                      <li>
+                          <a href="{% url 'create_profile_page' %}" class="dropdown-item">
+                              <i class="fas fa-user-plus"></i> Créer un profil
+                          </a>
+                      </li>
+                      {% endif %}
+                      
+                      {% if request.user.is_superuser %}
+                      <li class="dropdown-divider"></li>
+                      <li>
+                          <a href="{% url 'add_category' %}" class="dropdown-item">
+                              <i class="fas fa-folder-plus"></i> Ajouter une catégorie
+                          </a>
+                      </li>
+                      <li>
+                          <a href="{% url 'add_post' %}" class="dropdown-item">
+                              <i class="fas fa-plus-circle"></i> Ajouter un article
+                          </a>
+                      </li>
+                      {% endif %}
+                      
+                      <li class="dropdown-divider"></li>
+                      <li>
+                          <form action="{% url 'logout' %}" method="POST" class="logout-form">
+                              {% csrf_token %}
+                              <button type="submit" class="logout-btn">
+                                  <i class="fas fa-sign-out-alt"></i> Déconnexion
+                              </button>
+                          </form>
+                      </li>
+                  </ul>
               </li>
               {% else %}
-              <li><a href="{% url 'register' %}">S'enregistrer</a></li>
-              <li><a href="{% url 'login' %}">Se connecter</a></li>
-              {% endif %}
-            </ul>
+            <li><a href="{% url 'register' %}" class="nav-link register-btn"><i class="fas fa-user-plus"></i> S'enregistrer</a></li>
+            <li><a href="{% url 'login' %}" class="nav-link login-btn"><i class="fas fa-sign-in-alt"></i> Se connecter</a></li>
+            {% endif %}
+        </ul>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Détecter la page actuelle
+                const currentPath = window.location.pathname;
+                const navLinks = document.querySelectorAll('#main-nav .nav-link');
+                
+                // Correspondance entre les URLs et les data-nav
+                const urlMappings = {
+                    '{% url "home" %}': 'home',
+                    '{% url "about" %}': 'about',
+                    '{% url "contact" %}': 'contact',
+                    '{% url "forum:forum_list" %}': 'forum',
+                    '{% url "register" %}': 'register',
+                    '{% url "login" %}': 'login'
+                };
+                
+                // Trouver le lien correspondant à la page actuelle
+                let activeFound = false;
+                navLinks.forEach(link => {
+                    const linkPath = link.getAttribute('href');
+                    
+                    // Vérifier si l'URL correspond exactement
+                    if (linkPath === currentPath) {
+                        link.classList.add('active');
+                        activeFound = true;
+                    }
+                    
+                    // Pour les URLs plus complexes (avec paramètres)
+                    if (!activeFound && currentPath.startsWith(linkPath) {
+                        link.classList.add('active');
+                        activeFound = true;
+                    }
+                });
+                
+                // Solution alternative basée sur data-nav
+                if (!activeFound) {
+                    const navItem = Object.entries(urlMappings).find(([url, _]) => 
+                        currentPath.startsWith(url)
+                    );
+                    
+                    if (navItem) {
+                        const [_, navId] = navItem;
+                        document.querySelector(`[data-nav="${navId}"]`)?.classList.add('active');
+                    }
+                }
+            });
+            </script>
+          
+          <style>
+              .modern-nav {
+                  display: flex;
+                  list-style: none;
+                  margin: 0;
+                  padding: 0;
+                  gap: 1px;
+              }
+              
+              .modern-nav li {
+                  position: relative;
+              }
+              
+              .nav-link {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  padding: 12px 20px;
+                  color: #333;
+                  text-decoration: none;
+                  font-weight: 500;
+                  transition: all 0.3s ease;
+                  border-radius: 6px;
+                  background-color: rgba(255, 255, 255, 0.8);
+              }
+              
+              .nav-link:hover {
+                  background-color: rgba(255, 184, 26, 0.1);
+                  color: #000;
+              }
+              
+              .nav-link.active {
+                  background-color: #ffb81a;
+                  color: #fff;
+              }
+              
+              .nav-link.active:hover {
+                  background-color: #e6a517;
+              }
+              
+              .nav-link i {
+                  font-size: 0.9em;
+              }
+              
+              /* Dropdown styles */
+              .dropdown:hover .dropdown-menu {
+                  display: block;
+              }
+              
+              .dropdown-menu {
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 100%;
+                  min-width: 220px;
+                  background: white;
+                  border-radius: 8px;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                  padding: 8px 0;
+                  z-index: 1000;
+                  list-style: none;
+              }
+              
+              .dropdown-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  padding: 10px 16px;
+                  color: #333;
+                  text-decoration: none;
+                  transition: all 0.2s;
+              }
+              
+              .dropdown-item:hover {
+                  background-color: rgba(255, 184, 26, 0.1);
+                  color: #000;
+              }
+              
+              .dropdown-item i {
+                  width: 18px;
+                  text-align: center;
+              }
+              
+              .dropdown-divider {
+                  height: 1px;
+                  background-color: #eee;
+                  margin: 6px 0;
+              }
+              
+              /* User menu */
+              .user-menu {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+              }
+              
+              .user-avatar {
+                  font-size: 1.2em;
+              }
+              
+              .user-name {
+                  max-width: 120px;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+              }
+              
+              .dropdown-arrow {
+                  transition: transform 0.3s;
+                  font-size: 0.8em;
+              }
+              
+              .dropdown:hover .dropdown-arrow {
+                  transform: rotate(180deg);
+              }
+              
+              /* Login/Register buttons */
+              .register-btn {
+                  background-color: rgba(255, 184, 26, 0.2);
+              }
+              
+              .register-btn:hover {
+                  background-color: rgba(255, 184, 26, 0.3);
+              }
+              
+              .login-btn {
+                  background-color: rgba(255, 184, 26, 0.4);
+              }
+              
+              .login-btn:hover {
+                  background-color: rgba(255, 184, 26, 0.5);
+              }
+              
+              /* Logout button */
+              .logout-form {
+                  width: 100%;
+              }
+              
+              .logout-btn {
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  width: 100%;
+                  padding: 10px 16px;
+                  background: none;
+                  border: none;
+                  color: #333;
+                  cursor: pointer;
+                  text-align: left;
+                  font-weight: 500;
+              }
+              
+              .logout-btn:hover {
+                  background-color: rgba(255, 184, 26, 0.1);
+                  color: #000;
+              }
+              
+              /* Responsive */
+              @media (max-width: 768px) {
+                  .modern-nav {
+                      flex-direction: column;
+                      gap: 4px;
+                  }
+                  
+                  .dropdown-menu {
+                      position: static;
+                      box-shadow: none;
+                      border-radius: 0;
+                      padding: 0;
+                  }
+              }
+          </style>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
           </nav>
         </div>
@@ -221,7 +435,7 @@
           </div>
 
           <div class="col-lg-2 col-md-3 footer-links">
-            <h4>Liens Rapides</h4>
+            <h4>Liens Utiles</h4>
             <ul>
               <li><a href="{% url 'home' %}">Accueil</a></li>
               <li><a href="{% url 'about' %}">A Propos de Nous</a></li>
@@ -256,14 +470,7 @@
             </ul>
           </div>
 
-          <script>
-            // Fonction JavaScript pour soumettre le formulaire avec la catégorie ou mot-clé sélectionné
-            function submitSearchForm(keyword) {
-              var searchInput = document.querySelector('input[name="q"]');
-              searchInput.value = keyword; // Mettre le mot-clé dans le champ de recherche
-              document.getElementById("searchForm").submit(); // Soumettre le formulaire
-            }
-          </script>
+        
 
           <div class="col-lg-2 col-md-3 footer-links">
             <h4>Quelques Lieux</h4>
@@ -287,14 +494,7 @@
             </ul>
           </div>
 
-          <script>
-            // Fonction JavaScript pour soumettre le formulaire avec le lieu sélectionné
-            function submitSearchForm(location) {
-              var searchInput = document.querySelector('input[name="q"]');
-              searchInput.value = location; // Mettre le lieu sélectionné dans le champ de recherche
-              document.getElementById("searchForm").submit(); // Soumettre le formulaire
-            }
-          </script>
+          
         </div>
       </div>
 
@@ -304,10 +504,26 @@
         <div class="credits">Created by <a href="">Ynotech</a></div>
       </div>
     </footer>
+    
     <!-- FOOTER -->
 
-    <!-- SCRIPTS -->
 
+    <!-- SCRIPTS -->
+    <script>
+      // Fonction JavaScript pour soumettre le formulaire avec le lieu sélectionné
+      function submitSearchForm(location) {
+        var searchInput = document.querySelector('input[name="q"]');
+        searchInput.value = location; // Mettre le lieu sélectionné dans le champ de recherche
+        document.getElementById("searchForm").submit(); // Soumettre le formulaire
+      }
+   
+      // Fonction JavaScript pour soumettre le formulaire avec la catégorie ou mot-clé sélectionné
+      function submitSearchForm(keyword) {
+        var searchInput = document.querySelector('input[name="q"]');
+        searchInput.value = keyword; // Mettre le mot-clé dans le champ de recherche
+        document.getElementById("searchForm").submit(); // Soumettre le formulaire
+      }
+    </script>
     <!-- Scroll Top -->
     <a
       href="#"

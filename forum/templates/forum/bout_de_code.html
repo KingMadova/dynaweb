@@ -1,0 +1,95 @@
+
+<div class="container mt-4">
+    <!-- Topic Card -->
+    <div class="card mb-4">
+      <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ topic.title }}</h2>
+          {% if request.user == topic.author or request.user.is_superuser %}
+          <a
+            href="#"
+            class="btn btn-sm btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal"
+          >
+            <i class="fas fa-trash"></i> Delete
+          </a>
+          {% endif %}
+        </div>
+        <small class="text-muted">
+          Posted by {{ topic.author.username }} on {{ topic.created_at|date:"d/m/Y H:i" }} in
+          <span class="badge bg-secondary">{{ topic.category.name }}</span>
+        </small>
+      </div>
+      <div class="card-body">
+        <div class="mb-4">{{ topic.content|linebreaks }}</div>
+  
+        <div class="d-flex justify-content-start gap-2 mb-3">
+          <form method="post" action="{% url 'forum:upvote_topic' topic.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-success">
+              <i class="fas fa-arrow-up"></i> {{ topic.total_upvotes }}
+            </button>
+          </form>
+          <form method="post" action="{% url 'forum:downvote_topic' topic.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+              <i class="fas fa-arrow-down"></i> {{ topic.total_downvotes }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  
+  
+   
+  
+  
+  
+  
+    <!-- Replies Section -->
+    <div class="section-header">
+      <h3>
+        Replies <span class="comment-count">({{ topic.replies.count }})</span>
+      </h3>
+    </div>
+  
+    <section id="blog-comments" class="blog-comments section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="blog-comments-3">
+          <div class="comments-wrapper">
+            {% for reply in topic.replies.all %} {% if not reply.parent_reply %}
+            {# Affiche seulement les réponses de premier niveau #} {% include "forum/partials/reply_item.html" with reply=reply %} 
+            {% endif %} {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Main Reply Form -->
+    <div class="card mt-4" id="reply-form-container">
+      <div class="card-header">
+        <h4>Add Reply</h4>
+      </div>
+      <div class="card-body">
+        <form method="post" id="reply-form">
+          {% csrf_token %}
+          <input
+            type="hidden"
+            name="parent_reply"
+            id="parent-reply-input"
+            value=""
+          />
+          <div class="mb-3">
+            <textarea
+              name="content"
+              class="form-control"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>

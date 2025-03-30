@@ -1,0 +1,111 @@
+{% load static %}
+
+<!-- forum/reply_item.html -->
+<article class="comment-card">
+  <div class="comment-header">
+    <div class="user-info">
+      {% if reply.author.profile.profile_pic %}
+      <img
+        src="{{ reply.author.profile.profile_pic.url }}"
+        width="40"
+        height="40"
+        class="rounded-circle"
+        alt="profile_pic"
+        loading="lazy"
+      />
+      {% else %}
+      <img
+        src="{% static 'assets/img/default_profile.png' %}"
+        width="40"
+        height="40"
+        class="rounded-circle"
+        alt="default_pic_profile"
+        loading="lazy"
+      />
+      {% endif %}
+      <div class="meta">
+        <h4 class="name">{{ reply.author.username }}</h4>
+        <span class="date">
+          <i class="bi bi-calendar3"></i> {{ reply.created_at|date:"d/m/Y H:i"}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {% if reply.parent_reply %}
+  <div class="alert alert-light py-2 mb-3">
+    <small
+      >En réponse à
+      <strong>{{ reply.parent_reply.author.username }}</strong>:</small
+    >
+    <p class="mb-0">
+      <small>{{ reply.parent_reply.content|truncatechars:100 }}</small>
+    </p>
+  </div>
+  {% endif %}
+
+  <div class="comment-content">
+    <p>{{ reply.content|linebreaks }}</p>
+  </div>
+
+  <div class="comment-actions">
+    <form method="post" action="{% url 'forum:like_reply' reply.id %}">
+      {% csrf_token %}
+      <button type="submit" class="action-btn like-btn">
+        <i class="bi bi-hand-thumbs-up"></i>
+        <span>{{ reply.likes.count }}</span>
+      </button>
+    </form>
+
+    <button
+      class="action-btn reply-button"
+      data-reply-id="{{ reply.id }}"
+      data-reply-author="{{ reply.author.username }}"
+      aria-expanded="false"
+      aria-controls="reply-form-{{ reply.id }}"
+    >
+      <i class="bi bi-reply"></i>
+      <span>Répondre</span>
+    </button>
+  </div>
+
+  <!-- Reply Form (hidden by default) -->
+  <div
+    class="reply-form-container mt-3"
+    id="reply-form-{{ reply.id }}"
+    style="display: none"
+  >
+    <form
+      method="post"
+      action="{% url 'forum:reply_to_reply' parent_reply_id=reply.id %}"
+    >
+      {% csrf_token %}
+      <div class="mb-2">
+        <textarea
+          name="content"
+          class="form-control"
+          rows="3"
+          required
+          placeholder="Réponse à @{{ reply.author.username }}..."
+        ></textarea>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary">Envoyer</button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary cancel-reply"
+          data-reply-id="{{ reply.id }}"
+        >
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Affichage des réponses enfants -->
+  <div class="child-replies mt-3">
+    {% for child_reply in reply.replies.all %} 
+    {% include "forum/partials/reply_item.html" with reply=child_reply %}
+    {% endfor %}
+  </div>
+</article>

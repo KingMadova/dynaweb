@@ -1,108 +1,86 @@
-{% extends 'base.html' %} 
-{% block title %} Créez un profil {%endblock%}
-{%block content %} 
+{% extends 'base.html' %}
+{% block title %}Créez un profil{% endblock %}
+{% block content %}
 {% if user.is_authenticated %}
 
- <!-- CREATE USER PROFILE PAGE -->
+<!-- CREATE USER PROFILE PAGE -->
 <section id="blog-comment-form" class="blog-comment-form section">
-              <div class="container" data-aos="fade-up" data-aos-delay="100">
-                <form method="POST" enctype="multipart/form-data" role="form">
-                  {% csrf_token %}
-                  <div class="section-header">
-                    <h3>Créez un profil d'utilisateur</h3>
-                    <p>
-                      Vos informations sont parfaitement sécurisées <span style="color: red;">*</span>
-                    </p>
-                  </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <form method="POST" enctype="multipart/form-data" role="form">
+            {% csrf_token %}
+            
+            <div class="section-header">
+                <h3>Créez un profil d'utilisateur</h3>
+                <p>Vos informations sont parfaitement sécurisées <span class="text-danger">*</span></p>
+            </div>
 
-                  <div class="row gy-3">
-
-                    <div class="col-md-12 form-group">
-                      <label for="id_profile_pic">Photo de profil <span style="color: red;">*</span></label>
-                      <input
-                        type="file"
-                        name="profile_pic"
-                        class="form-control"
-                        id="id_profile_pic"
-                        placeholder="Choisissez une photo de profil"
-                        required=""
-                        accept="image/*"
-                      />
+            <div class="row gy-3">
+                <!-- Afficher les erreurs globales -->
+                {% if form.non_field_errors %}
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
                     </div>
+                </div>
+                {% endif %}
 
-                    <div class="col-12 form-group">
-                      <label for="bio">Parlez un peu de vous <span style="color: red;">*</span></label>
-                      <textarea
-                        class="form-control"
-                        name="bio"
-                        id="bio"
-                        rows="5"
-                        placeholder="Parlez un peu de vous..."
-                        required=""
-                      ></textarea>
-                    </div>
+                <!-- Champ Profile Pic -->
+                <div class="col-md-12 form-group">
+                    <label for="{{ form.profile_pic.id_for_label }}">Photo de profil <span class="text-danger">*</span></label>
+                    {{ form.profile_pic }}
+                    {% if form.profile_pic.errors %}
+                        <div class="text-danger">{{ form.profile_pic.errors }}</div>
+                    {% endif %}
+                </div>
 
-                    <div class="col-12 form-group">
-                      <label for="id_facebook_url">Facebook</label>
-                      <input
-                        type="url"
-                        name="facebook_url"
-                        class="form-control"
-                        id="website"
-                        placeholder="votre profil Facebook"
-                      />
-                    </div>
+                <!-- Champ Bio -->
+                <div class="col-12 form-group">
+                    <label for="{{ form.bio.id_for_label }}">Parlez un peu de vous <span class="text-danger">*</span></label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}
+                        <div class="text-danger">{{ form.bio.errors }}</div>
+                    {% endif %}
+                </div>
 
-                    
-                    <div class="col-12 form-group">
-                      <label for="id_twitter_url">Twitter</label>
-                      <input
-                        type="url"
-                        name="twitter_url"
-                        class="form-control"
-                        id="website"
-                        placeholder="votre profil Twitter"
-                      />
-                    </div>
+                <!-- Champs réseaux sociaux -->
+                <div class="col-12 form-group">
+                    <label for="{{ form.website_url.id_for_label }}">Site Web</label>
+                    {{ form.website_url }}
+                </div>
 
-                    <div class="col-12 form-group">
-                      <label for="id_instagram_url">Instagram</label>
-                      <input
-                        type="url"
-                        name="instagram_url"
-                        class="form-control"
-                        id="website"
-                        placeholder="votre profil Instagram"
-                      />
-                    </div>
+                <div class="col-12 form-group">
+                    <label for="{{ form.facebook_url.id_for_label }}">Facebook</label>
+                    {{ form.facebook_url }}
+                </div>
 
-                    <div class="col-12 form-group">
-                      <label for="id_pinterest_url">Pinterest</label>
-                      <input
-                        type="url"
-                        name="pinterest_url"
-                        class="form-control"
-                        id="website"
-                        placeholder="votre profil Pinterest"
-                      />
-                    </div>
+                <div class="col-12 form-group">
+                    <label for="{{ form.twitter_url.id_for_label }}">Twitter</label>
+                    {{ form.twitter_url }}
+                </div>
 
-                    
-                    <div class="col-12 text-center">
-                      <button type="submit" class="btn-submit">
-                        Validez
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+                <div class="col-12 form-group">
+                    <label for="{{ form.instagram_url.id_for_label }}">Instagram</label>
+                    {{ form.instagram_url }}
+                </div>
+
+                <div class="col-12 form-group">
+                    <label for="{{ form.pinterest_url.id_for_label }}">Pinterest</label>
+                    {{ form.pinterest_url }}
+                </div>
+
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary">Validez</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </section>
-<!-- /CREATE USER PROFILE PAGE -->
 
 {% else %}
-<br />
-Vous n'êtes pas autorisé à vous trouvez ici ! (et vous le savez...) 
-{% endif %} 
-
-
+<div class="alert alert-warning">
+    Vous n'êtes pas autorisé à accéder à cette page !
+</div>
+{% endif %}
 {% endblock %}

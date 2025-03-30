@@ -6,6 +6,11 @@ from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth import logout
+from django.db.models import Count
+from django.contrib.auth.models import User
+from app.models import Comment  # Importez votre modèle Comment
+
+
 
 from app.models import Profile
 from .forms import PasswordChangingForm, ProfilePageForm, SignUpForm, EditProfileForm
@@ -19,7 +24,6 @@ class CreateProfilePageView(CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-    
 
 
 class EditProfilePageView(generic.CreateView):
@@ -28,17 +32,29 @@ class EditProfilePageView(generic.CreateView):
     fields = ['bio', 'profile_pic', 'website_url', 'facebook_url', 'twitter_url', 'instagram_url', 'pinterest_url']
     success_url = reverse_lazy('home')
 
+
 class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'registration/user_profile.html'
     
-    def get_context_data(self, *args, **kwargs):
-        # users = Profile.objects.all()
-        context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.get_object()
         
-        page_user = get_object_or_404(Profile, id=self.kwargs['pk'])
+        # Obtenez les statistiques de l'utilisateur en utilisant les bons related_names
+        user_stats = User.objects.filter(
+            pk=profile.user.pk
+        ).annotate(
+            post_count=Count('posts', distinct=True),  # Utilisez 'posts' au lieu de 'post'
+            comment_count=Count('comments', distinct=True)
+        ).first()
         
-        context["page_user"] = page_user
+        context.update({
+            'page_user': profile,
+            'post_count': user_stats.post_count if user_stats else 0,
+            'comment_count': user_stats.comment_count if user_stats else 0,
+            'author': profile.user  # Ajout de l'utilisateur au contexte
+        })
         return context
 
 
