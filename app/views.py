@@ -68,6 +68,10 @@ def confirmation_view(request : HttpRequest):
 def about(request):
     return render(request, 'about.html')
 
+
+def galery(request):
+    return render(request, 'galery.html')
+
 def LikeView(request, pk):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
     liked = False

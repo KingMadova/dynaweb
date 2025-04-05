@@ -538,21 +538,31 @@
                 Your subscription request has been sent. Thank you!
               </div>
             </form>
-
-         </div>
+          </div>
         </div>
         <div class="col-lg-6">
           <div class="cta-image" data-aos="zoom-out" data-aos-delay="200">
-            <img
-              src="{% static 'assets/img/cta/cta-1.png' %}"
-              alt=""
-              class="img-fluid"
-            />
+            <!-- Version optimisée avec picture/source -->
+            <picture>
+              <!-- Image pour mobile -->
+              <source 
+                media="(max-width: 991px)" 
+                srcset="{% static 'assets/img/cta/cta-mobile.png' %}"
+                width="300"
+                height="200"
+              >
+              <!-- Image pour desktop -->
+              <img 
+                src="{% static 'assets/img/cta/cta-desktop.png' %}" 
+                alt="Newsletter illustration" 
+                class="img-fluid"
+              >
+            </picture>
           </div>
         </div>
       </div>
     </div>
-  </section>
+</section>
   <!-- /Call To Action Section -->
 </main>
 

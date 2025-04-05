@@ -7,26 +7,52 @@ from .models import Topic, Reply, ForumCategory
 from .forms import TopicForm, ReplyForm
 from django.db.models import Count
 
+from django.db.models import Q
 
 
 def is_moderator(user):
     return user.is_authenticated and user.is_superuser
 
+
 class ForumListView(ListView):
     model = Topic
     template_name = "forum/forum_list.html"
     context_object_name = "topics"
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = Topic.objects.select_related('author', 'category').prefetch_related('replies')
+        
         category_slug = self.request.GET.get('category')
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
-        return queryset
+        
+        search_query = self.request.GET.get('q')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(content__icontains=search_query) |
+                Q(author__username__icontains=search_query) |
+                Q(replies__content__icontains=search_query)
+            ).distinct()
+        
+        return queryset.order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = ForumCategory.objects.all()
+        
+        # Sujets populaires (engagement = upvotes + downvotes + réponses)
+        context['popular_topics'] = Topic.objects.annotate(
+            engagement=Count('upvotes') + Count('downvotes') + Count('replies')
+        ).order_by('-engagement', '-created_at')[:5]
+        
+        categories = ForumCategory.objects.annotate(
+            topic_count=Count('topics')
+        )
+        context['categories'] = categories
+        context['all_topics_count'] = Topic.objects.count()
+        context['current_category'] = self.request.GET.get('category')
+        
         return context
 
 

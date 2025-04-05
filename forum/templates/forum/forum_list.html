@@ -97,6 +97,9 @@
           <!-- Fin col-md-9 -->
 
           <style>
+            
+            
+
             .topics-container {
               display: flex;
               flex-direction: column;
@@ -240,55 +243,119 @@
                 justify-content: flex-start;
               }
             }
+
+            
           </style>
 
           <!-- Sidebar (right side) -->
 
           <div class="col-md-3 ps-lg-4">
-            <div class="sticky-top pt-3">
+            <div class="sticky">
               <div
                 class="widgets-container"
                 data-aos="fade-up"
                 data-aos-delay="200"
               >
                 <!-- Search Widget -->
-                <div class="search-widget widget-item">
-                  <h3 class="widget-title">Search</h3>
-                  <form action="">
-                    <input type="text" />
-                    <button type="submit" title="Search">
-                      <i class="bi bi-search"></i>
+                <div class="search-widget">
+                  <form
+                    method="GET"
+                    action="{% url 'forum:forum_list' %}"
+                    class="d-flex"
+                  >
+                    <input
+                      type="text"
+                      name="q"
+                      class="form-control"
+                      placeholder="Rechercher..."
+                      value="{{ request.GET.q }}"
+                      aria-label="Recherche"
+                    />
+                    <button type="submit" class="btn btn-warning ms-2">
+                      <i class="fas fa-search"></i>
                     </button>
                   </form>
                 </div>
+
+                {% if search_query %}
+                <div class="search-results-info">
+                  <h4>Résultats pour "{{ search_query }}"</h4>
+                  <p>{{ topics.count }} sujet(s) trouvé(s)</p>
+                </div>
+                {% endif %}
                 <!--/Search Widget -->
 
-                <!-- Categories Widget -->
-                <div class="categories-widget widget-item">
-                  <h3 class="widget-title">Catégories</h3>
-                  <div class="category-list">
-                    <a
-                      href="/forum/"
-                      class="category-item {% if not request.GET.category %}active{% endif %}"
-                    >
-                      <h6>Toutes les catégories</h6>
-                    </a>
-                    {% for category in categories %}
-                    <a
-                      href="?category={{ category.slug }}"
-                      class="category-item {% if request.GET.category == category.slug %}active{% endif %}"
-                    >
-                      {{ category.name }}
-                    </a>
-                    {% empty %}
-                    <div class="no-category">Aucune catégorie disponible</div>
-                    {% endfor %}
+                
+
+               <!-- Popular Topics Widget -->
+                  <div class="popular-topics-widget widget-item mt-4">
+                    <h3 class="widget-title">
+                      Sujets populaires
+                    </h3>
+                    
+                    <div class="category-list">  <!-- Même classe que pour les catégories -->
+                      <a href="#" class="category-item">  <!-- Même structure que l'entête catégories -->
+                        <h6>Tous les sujets</h6>
+                      </a>
+                      
+                      {% if popular_topics %}
+                        <ul class="category-sublist">  <!-- Même liste que pour les catégories -->
+                          {% for topic in popular_topics %}
+                          <li>
+                            <a href="{% url 'forum:topic_detail' topic.pk %}" class="category-item">
+                              {{ topic.title|truncatechars:30 }}
+                              
+                              {% if topic.engagement %}
+                              <span class="engagement-badge">{{ topic.engagement }}</span>
+                              {% endif %}
+                            </a>
+                          </li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <div class="no-category">
+                          <i class="far fa-folder-open me-2"></i>
+                          Aucun sujet populaire
+                        </div>
+                      {% endif %}
+                    </div>
                   </div>
-                  <!--/Categories Widget -->
+
+                  <!-- Categories Widget -->
+                  <div class="categories-widget widget-item mt-4">
+                    <h3 class="widget-title">
+                      Catégories
+                    </h3>
+                    
+                    <div class="category-list">
+                      <a href="/forum/" class="category-item {% if not request.GET.category %}active{% endif %}">
+                        <h6>Toutes les catégories</h6>
+                      </a>
+                      
+                      {% if categories %}
+                        <ul class="category-sublist">
+                          {% for category in categories %}
+                          <li>
+                            <a href="?category={{ category.slug }}" 
+                              class="category-item {% if request.GET.category == category.slug %}active{% endif %}">
+                              {{ category.name }}
+                            </a>
+                          </li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <div class="no-category">
+                          <i class="far fa-folder-open me-2"></i>
+                          Aucune catégorie
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -320,6 +387,155 @@
     .container-fluid {
       padding-left: 0;
       padding-right: 0;
+    }
+
+    .search-widget {
+      margin-bottom: 20px;
+    }
+
+    .search-widget form {
+      display: flex;
+    }
+
+    .search-widget input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .search-widget button {
+      background: #ffb81a;
+      border: none;
+      padding: 0 15px;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+
+    .search-results-info {
+      background: #f8f9fa;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      border-left: 4px solid #ffb81a;
+    }
+
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .category-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      color: #333;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .category-item:hover {
+      background-color: #e9ecef;
+    }
+
+    .category-item.active {
+      background-color: #ffb81a;
+      color: white;
+    }
+
+    .category-item h6 {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .category-sublist {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0 0;
+    }
+    
+    .category-sublist li {
+      margin: 0.25rem 0;
+    }
+    
+    .category-sublist .category-item {
+      display: block;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+    }
+
+    .badge {
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.8em;
+    }
+
+    .category-item.active .badge {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .no-category {
+      padding: 10px;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    /* Widget Sujets populaires */
+    .popular-topics-widget {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
+    
+
+    .popular-topic-item {
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .popular-topic-item:hover {
+      color: #ffb81a;
+      transform: translateX(5px);
+    }
+
+    .popular-topic-item:last-child {
+      border-bottom: none;
+    }
+
+    .engagement-badge {
+      float: right;
+      background: #f8f9fa;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+
+    .widget-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #2d465e;
+      position: relative;
+      padding-left: 25px;
+    }
+
+    .widget-title::before {
+      content: "🔥";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
     }
   </style>
 </div>

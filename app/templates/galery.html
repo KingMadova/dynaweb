@@ -1,0 +1,357 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<style>
+  :root {
+    --background-color: #ffffff;
+    --default-color: #212529;
+    --heading-color: #2d465e;
+    --accent-color: #ffb81a;
+    --surface-color: #ffffff;
+    --contrast-color: #ffffff;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background-color: #eaeaea;
+    overflow-x: hidden;
+  }
+
+  /* Slider amélioré */
+  .hero-slider {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    height: 600px;
+    margin: 50px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  #slide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slide-item {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    transform: translateY(-50%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    /* Ajouter ces deux propriétés */
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .slide-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 60%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+
+  .slide-item.active {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: none;
+    /* Forcer le redimensionnement sur l'élément actif */
+    background-size: cover;
+    background-position: center;
+  }
+
+  .slide-content {
+    position: absolute;
+    bottom: 60px;
+    left: 40px;
+    right: 40px;
+    color: white;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.4s ease;
+  }
+
+  .slide-item.active .slide-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .slide-content .name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .slide-content .des {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+  }
+
+  .slide-content button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 30px;
+    background: var(--accent-color);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .slide-content button:hover {
+    transform: translateY(-2px);
+  }
+
+  .slider-nav {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 15px;
+  }
+
+  .slider-nav button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+  }
+
+  .slider-nav button:hover {
+    background: var(--accent-color);
+    border-color: transparent;
+    transform: scale(1.1);
+  }
+
+  /* Galerie Bento révisée */
+  .bento-gallery {
+    width: 90%;
+    max-width: 1400px;
+    margin: 80px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: 250px;
+    gap: 25px;
+  }
+
+  .bento-item {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .bento-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .bento-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .bento-item.large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .bento-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .bento-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .bento-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .bento-item:hover .bento-caption {
+    opacity: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-slider {
+      height: 500px;
+    }
+
+    .slide-content .name {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-slider {
+      height: 400px;
+      border-radius: 15px;
+    }
+
+    .slide-item:not(.active) {
+      display: none;
+    }
+
+    .slide-content {
+      left: 20px;
+      right: 20px;
+      bottom: 40px;
+    }
+
+    .slide-content .name {
+      font-size: 1.5rem;
+    }
+
+    .bento-gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<!-- Slider amélioré -->
+<div class="hero-slider">
+  <div id="slide">
+    {% for i in "123456789" %}
+    <div
+      class="slide-item {% if forloop.first %}active{% endif %}"
+      style="background-image: url('{% static 'assets/img/gallery/'|add:i|add:'.jpg' %}')"
+      role="img"
+      aria-label="Slide {{ i }}"
+    >
+      <div class="slide-content">
+        <div class="name">Découvrez l'Excellence</div>
+        <div class="des">
+          Plongez au cœur de nos réalisations les plus remarquables
+        </div>
+        <button>Génération Auto-Entrepreneur</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="slider-nav">
+    <button id="prev" aria-label="Précédent">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button id="next" aria-label="Suivant">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Galerie Bento fonctionnelle -->
+<div class="bento-gallery">
+  {% with "12345678901234567890123456789012345678901234567890123456789012345678901234567890" as numbers %}
+    {% for num in numbers|slice:":80" %}
+    <div class="bento-item {% if forloop.counter|divisibleby:6 %}large{% endif %}">
+      <img
+        src="{% static 'assets/img/gallery/' %}{{ forloop.counter }}.jpg"
+        alt="Projet {{ forloop.counter }}"
+        loading="lazy"
+      />
+      <div class="bento-caption">
+        <h3>Projet {{ forloop.counter }}</h3>
+      </div>
+    </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const slider = {
+      items: document.querySelectorAll(".slide-item"),
+      prevBtn: document.getElementById("prev"),
+      nextBtn: document.getElementById("next"),
+      currentIndex: 0,
+
+      init() {
+        this.positionSlides();
+        this.setupEventListeners();
+        this.startAutoRotation();
+      },
+
+      positionSlides() {
+        this.items.forEach((item, index) => {
+          const position =
+            (index - this.currentIndex + this.items.length) % this.items.length;
+          item.style.transform = `translateX(${position * 110}%) scale(${
+            1 - Math.abs(position) * 0.1
+          })`;
+          item.style.zIndex = 10 - Math.abs(position);
+          item.style.opacity = position === 0 ? 1 : 0.5;
+          item.classList.toggle("active", position === 0);
+        });
+      },
+
+      setupEventListeners() {
+        this.prevBtn.addEventListener("click", () => this.navigate(-1));
+        this.nextBtn.addEventListener("click", () => this.navigate(1));
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") this.navigate(-1);
+          if (e.key === "ArrowRight") this.navigate(1);
+        });
+      },
+
+      navigate(direction) {
+        this.currentIndex =
+          (this.currentIndex + direction + this.items.length) %
+          this.items.length;
+        this.positionSlides();
+        this.restartAutoRotation();
+      },
+
+      startAutoRotation() {
+        this.interval = setInterval(() => this.navigate(1), 7000);
+      },
+
+      restartAutoRotation() {
+        clearInterval(this.interval);
+        this.startAutoRotation();
+      }
+    };
+
+    slider.init();
+  });
+</script>
+
+{% endblock %}
