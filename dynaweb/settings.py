@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s#^rbn^=nol$8gff&irlx(xmtnyl%@sngyad+q%_js%^g3fi8y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -71,13 +71,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dynaweb',
-        'USER': 'root',
-        'PASSWORD': '',  # Laissez vide si pas de mot de passe
-        'HOST': '127.0.0.1',  # Préférable à 'localhost' sous Windows
+        'USER': 'dynauser',
+        'PASSWORD': 'motdepassefort',  # ⚠️ change ça plus tard en variable d'environnement
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
 
