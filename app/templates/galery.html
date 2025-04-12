@@ -281,7 +281,7 @@
 <!-- Galerie Bento fonctionnelle -->
 <div class="bento-gallery">
   {% with "12345678901234567890123456789012345678901234567890123456789012345678901234567890" as numbers %}
-    {% for num in numbers|slice:":80" %}
+    {% for num in numbers|slice:":32" %}
     <div class="bento-item {% if forloop.counter|divisibleby:6 %}large{% endif %}">
       <img
         src="{% static 'assets/img/gallery/' %}{{ forloop.counter }}.jpg"

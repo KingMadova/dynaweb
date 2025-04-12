@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -13,6 +14,7 @@ from .models import Category, Post, Comment
 
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, EditForm, CommentForm 
+
 
 
 
